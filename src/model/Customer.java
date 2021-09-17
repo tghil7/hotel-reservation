@@ -13,6 +13,7 @@ public class Customer {
 
     String emailRegex = "^(.+)@(.+).(.+)$";
     Pattern pattern = Pattern.compile(emailRegex);
+    
 
 
     public Customer(String firstName,String lastName, String email) throws IllegalArgumentException{
