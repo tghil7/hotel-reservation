@@ -19,7 +19,7 @@ public final class ReservationService {
     private Map<String, Room> roomQueue  = new HashMap<String, Room>();
 
     //Collection to store available rooms;
-    private Set<IRoom> availableRooms = new HashSet<IRoom>();
+    private List<IRoom> availableRooms = new LinkedList<IRoom>();
 
     //Collection to store reservations.
     private Set<Reservation> customerReservation = new HashSet<Reservation>();

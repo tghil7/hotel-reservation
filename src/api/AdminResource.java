@@ -2,6 +2,8 @@ package api;
 
 import service.CustomerService;
 import model.*;
+import service.ReservationService;
+
 import java.util.List;
 
 public class AdminResource {
@@ -16,6 +18,7 @@ public class AdminResource {
     }
 
     public void addRooms(List<IRoom> rooms){
+        return ReservationService.getInstance().
 
     }
 }
