@@ -23,9 +23,9 @@ public final class ReservationService {
 
     //Collection to store reservations.
     private Set<Reservation> customerReservation = new HashSet<Reservation>();
+
   public void addRoom(IRoom room){
       roomQueue.put(room.getRoomNumber(), (Room) room);
-
   }
 
   public static ReservationService getInstance(){
@@ -62,4 +62,9 @@ public final class ReservationService {
           reservation.toString();
       }
   }
+
+  //Return all rooms
+    public Collection getAllRooms(){
+      return (Collection) roomQueue;
+    }
 }
