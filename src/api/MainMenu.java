@@ -12,6 +12,9 @@ public class MainMenu {
 
     //Crate scanner to read user input.
     Scanner kb = new Scanner(System.in);
+
+    //Date input formatter
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
     //Get the user input
     public int getAction(){
       System.out.println("Please enter a number for the menu item to be accessed");
@@ -25,13 +28,17 @@ public class MainMenu {
             case 1:
                 System.out.print ("Please enter check in date");
                 String checkInDate = kb.nextLine();
+                System.out.print ("Please enter check out date");
+                String checkOutDate = kb.nextLine();
+
                 try{
-                  Date checkIn = checkInDate.parse(checkInDate);
+                  Date checkIn = formatter.parse(checkInDate);
+                  Date checkOut = formatter.parse(checkOutDate);
+                  HotelResource.getInstance().findARoom(checkIn, checkOut);
                 }
                 catch(ParseException e){
                     System.out.println("Parsing exception"+ e);
                 }
-                HotelResource.getInstance().findARoom();
                 break;
             case 2:
                 action2();
