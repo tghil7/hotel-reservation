@@ -12,6 +12,9 @@ import java.util.Map;
 
 public final class ReservationService {
 
+    private ReservationService(){ }
+    //Static reference
+    private static ReservationService reservationService = new ReservationService();
     //Collection to store all rooms
     private Map<String, Room> roomQueue  = new HashMap<String, Room>();
 
@@ -23,6 +26,10 @@ public final class ReservationService {
   public void addRoom(IRoom room){
       roomQueue.put(room.getRoomNumber(), (Room) room);
 
+  }
+
+  public static ReservationService getInstance(){
+      return reservationService;
   }
 
   public IRoom getARoom(String roomId){
@@ -48,5 +55,11 @@ public final class ReservationService {
 
   public Collection<Reservation> getCustomersReservation(Customer customer){
        return customerReservation;
+  }
+
+  public void PrintAllReservation(){
+      for (Reservation reservation : customerReservation){
+          reservation.toString();
+      }
   }
 }

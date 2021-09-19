@@ -7,8 +7,13 @@ import java.util.Map;
 import java.util.HashMap;
 
 
-public  final class CustomerService {
+public class CustomerService {
+    //Static reference
 
+    private static CustomerService customerService;
+    public static CustomerService getInstance(){
+        return customerService;
+    }
     private Map <String,Customer> customerQueue  = new HashMap<String,Customer>();
 
     public void addCustomer(String email, String firstName, String lastName){

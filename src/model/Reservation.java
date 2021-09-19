@@ -48,6 +48,6 @@ public class Reservation {
 
     @Override
     public String toString(){
-        return "Customer: "  + customer.toString() + "Room" + room + " Check in date" + checkInDate + " check out date " + checkOutDate;
+        return "Customer: "  + customer.toString() + "Room" + room + " Check in date" + checkInDate + " check out date " + checkOutDate + "\n";
     }
 }
