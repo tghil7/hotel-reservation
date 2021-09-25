@@ -18,10 +18,6 @@ public class Reservation {
         return room;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
     public Customer getCustomer(){
         return customer;
     }
@@ -32,6 +28,11 @@ public class Reservation {
 
     public Date getCheckOutDate(){
         return checkOutDate;
+    }
+
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public void setRoom(IRoom room) {

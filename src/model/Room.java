@@ -24,7 +24,7 @@ public class Room implements IRoom{
 
     @Override
     public boolean isFree() {
-        return true;
+        return false;
     }
 
     public void setRoomNumber(String roomNumber){
