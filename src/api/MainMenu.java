@@ -28,7 +28,8 @@ public class MainMenu {
                 "3. Create an account" + "\n" +
                 "4. Admin" + "\n" +
                 "5. Exit" + "\n");
-      System.out.println("Please enter a number for the menu item to be accessed");
+      System.out.println ("========================================================");
+      System.out.println("Please enter a number for the menu item to be accessed:");
 
       int response = kb.nextInt();
       return response;
@@ -43,9 +44,9 @@ public class MainMenu {
                     kb.nextLine();
                     System.out.println("Please enter your email address:");
                     String email = kb.nextLine();
-                    System.out.println("Please enter check in date(format MM-dd-yyyy):");
+                    System.out.println("Please enter check in date(format MMM-dd-yyyy):");
                     String checkInDate = kb.nextLine();
-                    System.out.println("Please enter check out date (format MM-dd-yyyy):");
+                    System.out.println("Please enter check out date (format MMM-dd-yyyy):");
                     String checkOutDate = kb.nextLine();
 
 
@@ -75,8 +76,13 @@ public class MainMenu {
                     //2. See my reservations
                     System.out.println("Please enter your email address:");
                     String customerEmail = kb.nextLine();
-                    //call the hotel resource customer reservation method
-                    System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
+                    //call the hotel resource customer reservation method.
+                    if (HotelResource.getInstance().getCustomersReservation(customerEmail).isEmpty()){//Check if there is no reservation.
+                        System.out.println("No reservation was made using this email address:" + customerEmail);
+                    }
+                    else {
+                        System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
+                    }
 
                     break;
                 //...other case statements
@@ -101,9 +107,9 @@ public class MainMenu {
                     break;
                 case 5:
                     kb.nextLine();
-                    System.out.println("Exiting application.....");
+                    System.out.println("Exiting Admin menu.....");
                     keepRun = false;
-                    break;
+                    return;
 
 
             }

@@ -61,14 +61,17 @@ public final class ReservationService {
        return customerReservation;
   }
 
-  public void PrintAllReservation(){
+  public void printAllReservation(){
       for (Reservation reservation : customerReservation){
-          reservation.toString();
+         System.out.println(reservation.toString());
       }
   }
 
   //Return all rooms
     public Collection getAllRooms(){
       return roomMap.values();
+    }
+    public static void main (String [] args){
+
     }
 }

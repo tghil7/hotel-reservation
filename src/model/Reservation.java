@@ -1,8 +1,10 @@
 package model;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Reservation {
-    private Customer customer = new Customer();
+    private Customer customer;
     private IRoom room;
     private Date checkInDate;
     private Date checkOutDate;
@@ -49,6 +51,8 @@ public class Reservation {
 
     @Override
     public String toString(){
-        return "Customer: "  + this.getCustomer().getFirstName() +" "+ this.getCustomer().getLastName() + "Room" + room + " Check in date" + checkInDate + " check out date " + checkOutDate + "\n";
+        customer = new Customer();
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM-dd-yyyy", Locale.ENGLISH);
+        return room.toString() + " Check in date:" + checkInDate.toString() + " Check out date: " + checkOutDate.toString() + "\n";
     }
 }

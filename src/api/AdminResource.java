@@ -35,6 +35,6 @@ public class AdminResource {
     }
 
     public void displayAllReservations(){
-        ReservationService.getInstance().PrintAllReservation();
+        ReservationService.getInstance().printAllReservation();
     }
 }

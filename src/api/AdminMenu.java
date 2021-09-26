@@ -24,13 +24,14 @@ public class AdminMenu {
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
     //Get the user input
     public int getAction(){
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println("Admin menu:" +
                 "\n" + "1. See all Customers" + "\n" +
                 "2. See all Rooms" + "\n" +
                 "3. See all Reservations" + "\n" +
                 "4. Add a Room" + "\n" +
-                "5. Back to Main Menu" + "\n" +
-                "6. Exit");
+                "5. Back to Main Menu" + "\n");
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++");
         System.out.println("Please enter a number for the admin menu item:");
         int response = kb.nextInt();
         return response;
@@ -65,6 +66,7 @@ public class AdminMenu {
 
             case 3:
                 kb.nextLine();
+                System.out.println("Current reservations:");
                 //See all reservations
                 AdminResource.getInstance().displayAllReservations();
                 break;
@@ -98,11 +100,7 @@ public class AdminMenu {
                 mainMenu.startActions();
                 break;
 
-            case 6:
-                kb.nextLine();
-                System.out.println("Exiting application...");
-                keepRunning = false;
-                break;
+
            }
         }
     }
