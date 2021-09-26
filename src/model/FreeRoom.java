@@ -4,7 +4,9 @@ public class FreeRoom extends Room{
 
 
 
-    public FreeRoom(){
+    public FreeRoom(String roomNumber, Double price, RoomType roomType){
+        super.setRoomNumber(roomNumber);
+        super.setEnumeration(roomType);
         super.setPrice(0.00);
     }
 

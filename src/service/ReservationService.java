@@ -16,7 +16,7 @@ public final class ReservationService {
     //Static reference
     private static ReservationService reservationService = new ReservationService();
     //Collection to store all rooms
-    private Map<String, Room> roomQueue  = new HashMap<String, Room>();
+    private Map<String, Room> roomMap  = new HashMap<String, Room>();
 
     //Collection to store available rooms;
     private List<IRoom> availableRooms = new LinkedList<IRoom>();
@@ -25,7 +25,8 @@ public final class ReservationService {
     private Set<Reservation> customerReservation = new HashSet<Reservation>();
 
   public void addRoom(IRoom room){
-      roomQueue.put(room.getRoomNumber(), (Room) room);
+      room.setRoomStatus(true); //Make the room free before adding it to the map so it can be found when searching for free rooms.
+      roomMap.put(room.getRoomNumber(), (Room) room);
   }
 
   public static ReservationService getInstance(){
@@ -33,7 +34,7 @@ public final class ReservationService {
   }
 
   public IRoom getARoom(String roomId){
-      return roomQueue.get(roomId);
+      return roomMap.get(roomId);
   }
 
   public Reservation reserveARoom (Customer customer, IRoom room, Date checkInDate, Date checkOutDate ){
@@ -45,7 +46,9 @@ public final class ReservationService {
   }
 
   public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
-      for (IRoom room : roomQueue.values()) {
+      //Look in the map of rooms, if one of them is available, add it to the list of
+      //available rooms, and return that list of available rooms.
+      for (Room room : roomMap.values()) {
           if (room.isFree()) {
               availableRooms.add(room);
           }
@@ -53,6 +56,7 @@ public final class ReservationService {
       return availableRooms;
   }
 
+  //Get the reservation for an individual customer.
   public Collection<Reservation> getCustomersReservation(Customer customer){
        return customerReservation;
   }
@@ -65,6 +69,6 @@ public final class ReservationService {
 
   //Return all rooms
     public Collection getAllRooms(){
-      return (Collection) roomQueue;
+      return roomMap.values();
     }
 }

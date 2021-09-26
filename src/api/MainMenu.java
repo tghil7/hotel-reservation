@@ -14,71 +14,99 @@ public class MainMenu {
     Scanner kb = new Scanner(System.in);
     Date checkIn ;
     Date checkOut ;
+    boolean keepRun = true;
+    int action= 0;
 
     //Date input formatter
     SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
     //Get the user input
     public int getAction(){
+        System.out.println ("========================================================");
+        System.out.println("Main menu:" +
+                "\n" + "1. Find and reserve a room" + "\n" +
+                "2. See my reservations" + "\n" +
+                "3. Create an account" + "\n" +
+                "4. Admin" + "\n" +
+                "5. Exit" + "\n");
       System.out.println("Please enter a number for the menu item to be accessed");
 
       int response = kb.nextInt();
       return response;
     }
-    public void startActions(){
-        int action = getAction();//collect input
-        switch(action){
-            case 1:
-                kb.nextLine();
-                System.out.println("Please enter your email address:");
-                String email= kb.nextLine();
-                System.out.println ("Please enter check in date(format MM-dd-yyyy):");
-                String checkInDate = kb.nextLine();
-                System.out.println("Please enter check out date (format MM-dd-yyyy1):");
-                String checkOutDate = kb.nextLine();
+    public void startActions() {
+        while (keepRun) {
+            action = getAction();//collect input
 
 
-                try{
-                  checkIn = formatter.parse(checkInDate);
-                  checkOut = formatter.parse(checkOutDate);
-                  System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
-                }
-                catch(ParseException e){
-                    System.out.println("Parsing exception"+ e);
-                }
-                System.out.println("Which available room would you like to reserve?(Please enter room number:)");
-                String roomNumber = kb.nextLine();
-                //Book the room.
-                HotelResource.getInstance().bookARoom(email,HotelResource.getInstance().getRoom(roomNumber),checkIn, checkOut);
-                break;
-            case 2:
-                //2. See my reservations
-                System.out.println("Please enter your email address:");
-                String customerEmail= kb.nextLine();
-                //call the hotel resource customer reservation method
-                System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
-                break;
-        //...other case statements
-            case 3:
-                //3. Create an account
-                System.out.println("Please enter your first name");
-                String firstName = kb.nextLine();
-                System.out.println("Please enter your last name");
-                String lastName = kb.nextLine();
-                System.out.println("Please enter your email address:");
-                String emailAddress = kb.nextLine();
-                HotelResource.getInstance().CreateACustomer(emailAddress, firstName, lastName);
-                System.out.println("Account for customer " + firstName + " " + lastName+ " successfully created");
-                break;
+            switch (action) {
+                case 1:
+                    kb.nextLine();
+                    System.out.println("Please enter your email address:");
+                    String email = kb.nextLine();
+                    System.out.println("Please enter check in date(format MM-dd-yyyy):");
+                    String checkInDate = kb.nextLine();
+                    System.out.println("Please enter check out date (format MM-dd-yyyy):");
+                    String checkOutDate = kb.nextLine();
 
-            case 4:
-                //switch to admin menu here
-               AdminMenu adminMenu = new AdminMenu();
-                adminMenu.start();
-                break;
-            case 5:
-                System.out.println ("Exiting application");
-                break;
 
+                    try {
+                        checkIn = formatter.parse(checkInDate);
+                        checkOut = formatter.parse(checkOutDate);
+
+                        System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
+                    } catch (ParseException e) {
+                        System.out.println("Parsing exception" + e);
+                    }
+
+                    if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
+                        System.out.println("No room available for the dates selected.");
+                    } else {
+                        System.out.println("Which available room would you like to reserve?(Please enter room number:)");
+                        String roomNumber = kb.nextLine();
+                        //Book the room.
+                        HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
+                        //Set the room to busy
+                        HotelResource.getInstance().getRoom(roomNumber).setRoomStatus(false);
+                        System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
+                    }
+                    break;
+                case 2:
+                    kb.nextLine();
+                    //2. See my reservations
+                    System.out.println("Please enter your email address:");
+                    String customerEmail = kb.nextLine();
+                    //call the hotel resource customer reservation method
+                    System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
+
+                    break;
+                //...other case statements
+                case 3:
+                    //3. Create an account
+                    kb.nextLine();
+                    System.out.println("Please enter your first name");
+                    String firstName = kb.nextLine();
+                    System.out.println("Please enter your last name");
+                    String lastName = kb.nextLine();
+                    System.out.println("Please enter your email address:");
+                    String emailAddress = kb.nextLine();
+                    HotelResource.getInstance().CreateACustomer(emailAddress, firstName, lastName);
+                    System.out.println("Account for customer " + firstName + " " + lastName + " successfully created");
+                    break;
+
+                case 4:
+                    kb.nextLine();
+                    //switch to admin menu here
+                    AdminMenu adminMenu = new AdminMenu();
+                    adminMenu.start();
+                    break;
+                case 5:
+                    kb.nextLine();
+                    System.out.println("Exiting application.....");
+                    keepRun = false;
+                    break;
+
+
+            }
         }
     }
     public static void main (String [] args) {

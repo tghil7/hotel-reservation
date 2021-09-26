@@ -3,10 +3,22 @@ package model;
 public class Room implements IRoom{
     private String roomNumber;
     private Double price;
-    private RoomType enumeration;
+    private RoomType roomType;
+    private boolean roomFree;
+
+    //Add a constructor?
+
+    public Room (){
+
+    }
+    public Room (String roomNumber, Double price, RoomType roomType){
+        this.roomType= roomType;
+        this.roomNumber = roomNumber;
+        this.price = price;
+    }
 
     public String toString(){
-        return "Room number " + roomNumber + "Price" + price + "Room type " + enumeration;
+        return "Room number " + roomNumber + " Price:  $" + price + " Room type " + roomType;
     }
 
     public String getRoomNumber(){
@@ -19,12 +31,28 @@ public class Room implements IRoom{
 
     @Override
     public RoomType getRoomType(){
-        return enumeration;
+        return roomType;
     }
 
     @Override
     public boolean isFree() {
-        return false;
+        if (roomFree){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public void setRoomStatus(boolean value){
+        if(value) {
+            roomFree = true;
+        }
+
+        else{
+            roomFree = false;
+        }
+
     }
 
     public void setRoomNumber(String roomNumber){
@@ -35,7 +63,7 @@ public class Room implements IRoom{
     }
 
     public void setEnumeration(RoomType enumeration) {
-        this.enumeration = enumeration;
+        this.roomType = enumeration;
     }
 
 }
