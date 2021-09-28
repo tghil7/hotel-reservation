@@ -21,6 +21,15 @@ public class Reservation {
     }
 
     public Customer getCustomer(){
+        return this.customer;
+    }
+
+    public Customer getCustomer (String email){
+        //Get the list of customers, loop through that list and compare customers.
+        //Return the one with the matching email.
+        if(email == customer.getEmail()){
+            customer.toString();
+        }
         return customer;
     }
 

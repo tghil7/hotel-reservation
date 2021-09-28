@@ -4,7 +4,7 @@ public class Room implements IRoom{
     private String roomNumber;
     private Double price;
     private RoomType roomType;
-    private boolean roomFree;
+
 
     //Add a constructor?
 
@@ -36,24 +36,10 @@ public class Room implements IRoom{
 
     @Override
     public boolean isFree() {
-        if (roomFree){
-            return true;
-        }
-        else{
-            return false;
-        }
+       return true;
     }
 
-    public void setRoomStatus(boolean value){
-        if(value) {
-            roomFree = true;
-        }
 
-        else{
-            roomFree = false;
-        }
-
-    }
 
     public void setRoomNumber(String roomNumber){
         this.roomNumber = roomNumber;

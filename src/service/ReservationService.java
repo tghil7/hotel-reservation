@@ -24,8 +24,13 @@ public final class ReservationService {
     //Collection to store reservations.
     private Set<Reservation> customerReservation = new HashSet<Reservation>();
 
+    //Collection to store list of reservations for individual customers.
+    List<Reservation> customerReservationList = new ArrayList<>();
+
+
+
   public void addRoom(IRoom room){
-      room.setRoomStatus(true); //Make the room free before adding it to the map so it can be found when searching for free rooms.
+     //Make the room free before adding it to the map so it can be found when searching for free rooms.
       roomMap.put(room.getRoomNumber(), (Room) room);
   }
 
@@ -46,19 +51,47 @@ public final class ReservationService {
   }
 
   public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
-      //Look in the map of rooms, if one of them is available, add it to the list of
+      //Look in the set of reservation, if one of them is available with check in  and check out dates before reservation check
+      // , add it to the list of
       //available rooms, and return that list of available rooms.
-      for (Room room : roomMap.values()) {
-          if (room.isFree()) {
-              availableRooms.add(room);
+      if (customerReservation.isEmpty()){//If there are no reservations, return the full list of rooms
+          for (Room myRoom: roomMap.values()) {
+              availableRooms.add(myRoom);
           }
       }
+      for (Reservation reservation : customerReservation) {
+          IRoom room = reservation.getRoom();
+          if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(room))) {
+              if (checkOutDate.before(reservation.getCheckOutDate())) {
+                  availableRooms.add(room);
+              }
+          }
+          else if (checkInDate.after(checkOutDate)){
+              availableRooms.add(room);
+          }
+
+          //Also add each room from the big room Map that is not in the reservation list.
+          for (IRoom mapRoom: roomMap.values()){
+              if (!room.equals(mapRoom)) {
+                  availableRooms.add(mapRoom);
+              }
+          }
+      }
+
+     //Return the list of available rooms.
       return availableRooms;
   }
 
   //Get the reservation for an individual customer.
   public Collection<Reservation> getCustomersReservation(Customer customer){
-       return customerReservation;
+      //Loop through all the reservations in the list. For each of them, if the customer matches the customer passed as argument, return it.
+
+      for (Reservation reservation: customerReservation){
+          if (reservation.getCustomer(customer.getEmail()).equals(customer)){
+              customerReservationList.add(reservation);
+          }
+      }
+      return customerReservationList;
   }
 
   public void printAllReservation(){

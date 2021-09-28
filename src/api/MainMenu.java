@@ -41,6 +41,7 @@ public class MainMenu {
 
             switch (action) {
                 case 1:
+                    //Find and reserve a room.
                     kb.nextLine();
                     System.out.println("Please enter your email address:");
                     String email = kb.nextLine();
@@ -54,7 +55,8 @@ public class MainMenu {
                         checkIn = formatter.parse(checkInDate);
                         checkOut = formatter.parse(checkOutDate);
 
-                        System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
+
+
                     } catch (ParseException e) {
                         System.out.println("Parsing exception" + e);
                     }
@@ -62,12 +64,12 @@ public class MainMenu {
                     if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
                         System.out.println("No room available for the dates selected.");
                     } else {
+                        System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
                         System.out.println("Which available room would you like to reserve?(Please enter room number:)");
                         String roomNumber = kb.nextLine();
                         //Book the room.
                         HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
-                        //Set the room to busy
-                        HotelResource.getInstance().getRoom(roomNumber).setRoomStatus(false);
+
                         System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
                     }
                     break;
@@ -106,10 +108,12 @@ public class MainMenu {
                     adminMenu.start();
                     break;
                 case 5:
+                    //Exit the application
                     kb.nextLine();
-                    System.out.println("Exiting Admin menu.....");
+                    System.out.println("Exiting Main menu.....");
                     keepRun = false;
-                    return;
+                    System.exit(0);
+                    break;
 
 
             }
