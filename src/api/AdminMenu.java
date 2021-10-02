@@ -78,28 +78,17 @@ public class AdminMenu {
                 List<IRoom> rooms = new LinkedList<IRoom>();
                 //The newly created room would need to be added  to the list of rooms, before that list is passed.
                 System.out.println("Please enter the room number:");
-                String roomNumber = kb.nextLine();
+                String roomNumber = getUserInputForRoom();
                 System.out.println("Please enter the room price:");
-                Double price = kb.nextDouble();
+                Double price = getUserInputForPrice();
                 kb.nextLine();
 
                 //Try to get the room type from the user input
                 System.out.println("Please enter the room type (Enter exactly either 'SINGLE' or 'DOUBLE':");
                 RoomType roomType = null;
                 //Check for valid input:
-                boolean invalidInput = false;
-                do {
-                    try {
-                        String thisRoomType = kb.nextLine();
-                        roomType = RoomType.valueOf(thisRoomType);
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("Incorrect input. Please enter exactly either 'SINGLE' or 'DOUBLE':");
-                        invalidInput = true;
-                        kb.nextLine();
-                        //e.printStackTrace();
-                    }
-                }
-                while (invalidInput);
+                roomType = getMyRoomType();
+
                 //Create the new room with the information from the user, and add it to the list.
                 IRoom newRoom = new Room(roomNumber, price, roomType);
                 rooms.add (newRoom);
@@ -115,6 +104,47 @@ public class AdminMenu {
 
 
            }
+        }
+    }
+
+    public String getUserInputForRoom(){
+        while (true) {
+            try {
+                String userInput = kb.nextLine();
+                int input = 0;
+                Integer.parseInt(userInput);
+                return userInput;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number:");
+                //kb.nextLine();
+                //e.printStackTrace();
+            }
+        }
+    }
+
+    public Double getUserInputForPrice(){
+        while (true) {
+            try {
+                String userInput = kb.nextLine();
+                Double input = 0.00;
+                input = Double.parseDouble(userInput);
+                return input;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number of type double:");
+            }
+        }
+    }
+
+    public RoomType getMyRoomType(){
+        while (true){
+            try {
+                String thisRoomType = kb.nextLine();
+                RoomType type = RoomType.valueOf(thisRoomType);
+                return type;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid input. Please enter exactly either 'SINGLE' or 'DOUBLE':");
+
+            }
         }
     }
 

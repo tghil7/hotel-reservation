@@ -1,9 +1,11 @@
 package api;
- import java.text.ParseException;
+
  import java.util.Scanner;
  import java.io.*;
  import service.ReservationService;
  import service.CustomerService;
+
+ import javax.lang.model.type.NullType;
  import java.util.Date;
  import java.util.*;
  import java.text.*;
@@ -45,10 +47,16 @@ public class MainMenu {
                     kb.nextLine();
                     System.out.println("Please enter your email address:");
                     String email = kb.nextLine();
-                    System.out.println("Please enter your first name");
-                    String custFirstName = kb.nextLine();
-                    System.out.println("Please enter your last name");
-                    String custLastName = kb.nextLine();
+                    //If the customer did not register yet. Ask him to register.
+                    try {
+                        HotelResource.getInstance().getCustomer(email).toString();
+                    }
+                    catch (NullPointerException e){
+                        System.out.println("Customer did not register yet. Please use menu 3 to create an account first.");
+                        break;
+                    }
+                    
+
                     System.out.println("Please enter check in date(format MMM-dd-yyyy):");
                     String checkInDate = kb.nextLine();
                     System.out.println("Please enter check out date (format MMM-dd-yyyy):");
@@ -69,7 +77,7 @@ public class MainMenu {
                         System.out.println("No room available for the dates selected.");
                     } else {
                         //Add this customer to the list of customers.
-                        HotelResource.getInstance().CreateACustomer(custFirstName, custLastName, email);
+
                         System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
                         System.out.println("Which available room would you like to reserve?(Please enter room number:)");
                         String roomNumber = kb.nextLine();
