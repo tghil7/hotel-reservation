@@ -45,6 +45,10 @@ public class MainMenu {
                     kb.nextLine();
                     System.out.println("Please enter your email address:");
                     String email = kb.nextLine();
+                    System.out.println("Please enter your first name");
+                    String custFirstName = kb.nextLine();
+                    System.out.println("Please enter your last name");
+                    String custLastName = kb.nextLine();
                     System.out.println("Please enter check in date(format MMM-dd-yyyy):");
                     String checkInDate = kb.nextLine();
                     System.out.println("Please enter check out date (format MMM-dd-yyyy):");
@@ -64,6 +68,8 @@ public class MainMenu {
                     if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
                         System.out.println("No room available for the dates selected.");
                     } else {
+                        //Add this customer to the list of customers.
+                        HotelResource.getInstance().CreateACustomer(custFirstName, custLastName, email);
                         System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
                         System.out.println("Which available room would you like to reserve?(Please enter room number:)");
                         String roomNumber = kb.nextLine();
@@ -71,18 +77,22 @@ public class MainMenu {
                         HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
 
                         System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
+
                     }
                     break;
                 case 2:
                     kb.nextLine();
                     //2. See my reservations
+                    //Check that customer has an account first before trying to access their reservation.
                     System.out.println("Please enter your email address:");
                     String customerEmail = kb.nextLine();
+
                     //call the hotel resource customer reservation method.
                     if (HotelResource.getInstance().getCustomersReservation(customerEmail).isEmpty()){//Check if there is no reservation.
                         System.out.println("No reservation was made using this email address:" + customerEmail);
                     }
                     else {
+                        //Get the customer's reservation using their email.
                         System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
                     }
 
@@ -97,7 +107,7 @@ public class MainMenu {
                     String lastName = kb.nextLine();
                     System.out.println("Please enter your email address:");
                     String emailAddress = kb.nextLine();
-                    HotelResource.getInstance().CreateACustomer(emailAddress, firstName, lastName);
+                    HotelResource.getInstance().CreateACustomer(firstName, lastName, emailAddress);
                     System.out.println("Account for customer " + firstName + " " + lastName + " successfully created");
                     break;
 

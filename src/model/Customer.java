@@ -20,7 +20,7 @@ public class Customer {
 
 
 
-    public Customer(String email,String firstName, String lastName) throws IllegalArgumentException{
+    public Customer(String firstName, String lastName, String email) throws IllegalArgumentException{
         if (!pattern.matcher(email).matches()){
             throw new IllegalArgumentException("Invalid email format. Please try again");
 

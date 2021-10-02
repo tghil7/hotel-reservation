@@ -18,8 +18,8 @@ public final class HotelResource {
              return CustomerService.getInstance().getCustomer(email);
         }
 
-        public void CreateACustomer(String email, String firstName, String lastName){
-          CustomerService.getInstance().addCustomer(email,firstName,lastName);
+        public void CreateACustomer( String firstName, String lastName, String email){
+          CustomerService.getInstance().addCustomer(firstName,lastName,email);
         }
 
         public IRoom getRoom (String roomNumber){

@@ -46,6 +46,8 @@ public final class ReservationService {
       //Add the new reservation to the set of reservations.
       Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
       customerReservation.add(reservation);
+      //Remove the room that was just reserved from the list of available rooms.
+      availableRooms.remove(room);
       return reservation;
 
   }
@@ -56,24 +58,28 @@ public final class ReservationService {
       //available rooms, and return that list of available rooms.
       if (customerReservation.isEmpty()){//If there are no reservations, return the full list of rooms
           for (Room myRoom: roomMap.values()) {
-              availableRooms.add(myRoom);
-          }
-      }
-      for (Reservation reservation : customerReservation) {
-          IRoom room = reservation.getRoom();
-          if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(room))) {
-              if (checkOutDate.before(reservation.getCheckOutDate())) {
-                  availableRooms.add(room);
+              if(!(availableRooms.contains(myRoom))) {
+                  availableRooms.add(myRoom);
               }
           }
-          else if (checkInDate.after(checkOutDate)){
-              availableRooms.add(room);
-          }
-
-          //Also add each room from the big room Map that is not in the reservation list.
-          for (IRoom mapRoom: roomMap.values()){
-              if (!room.equals(mapRoom)) {
-                  availableRooms.add(mapRoom);
+      }
+      else {
+          for (Reservation reservation : customerReservation) {
+              IRoom room = reservation.getRoom();
+              if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(room))) {
+                  if (checkOutDate.before(reservation.getCheckOutDate())) {
+                      availableRooms.add(room);
+                  }
+              } else if (checkInDate.after(checkOutDate)) {
+                  availableRooms.add(room);
+              }
+              else {
+                  //Also add each room from the big room Map that is not in the reservation list.
+                  for (IRoom mapRoom : roomMap.values()) {
+                      if (!room.equals(mapRoom)&& !availableRooms.contains(mapRoom)) {
+                          availableRooms.add(mapRoom);
+                      }
+                  }
               }
           }
       }
@@ -87,7 +93,7 @@ public final class ReservationService {
       //Loop through all the reservations in the list. For each of them, if the customer matches the customer passed as argument, return it.
 
       for (Reservation reservation: customerReservation){
-          if (reservation.getCustomer(customer.getEmail()).equals(customer)){
+          if (reservation.getCustomer(customer.getEmail()).equals(customer) && !(customerReservationList.contains(reservation))){
               customerReservationList.add(reservation);
           }
       }

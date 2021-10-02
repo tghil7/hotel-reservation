@@ -85,8 +85,21 @@ public class AdminMenu {
 
                 //Try to get the room type from the user input
                 System.out.println("Please enter the room type (Enter exactly either 'SINGLE' or 'DOUBLE':");
-                String thisRoomType = kb.nextLine();
-                RoomType roomType = RoomType.valueOf(thisRoomType);
+                RoomType roomType = null;
+                //Check for valid input:
+                boolean invalidInput = false;
+                do {
+                    try {
+                        String thisRoomType = kb.nextLine();
+                        roomType = RoomType.valueOf(thisRoomType);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Incorrect input. Please enter exactly either 'SINGLE' or 'DOUBLE':");
+                        invalidInput = true;
+                        kb.nextLine();
+                        //e.printStackTrace();
+                    }
+                }
+                while (invalidInput);
                 //Create the new room with the information from the user, and add it to the list.
                 IRoom newRoom = new Room(roomNumber, price, roomType);
                 rooms.add (newRoom);

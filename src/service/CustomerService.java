@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class CustomerService {
     //Static reference
 
-    private static CustomerService customerService = new CustomerService();
+    private static CustomerService  customerService = new CustomerService();
     public static CustomerService getInstance(){
         return customerService;
     }
@@ -18,8 +18,8 @@ public class CustomerService {
     private Map <String,Customer> customerMap  = new HashMap<String,Customer>();
 
 
-    public void addCustomer(String email, String firstName, String lastName){
-        customerMap.put(email, new Customer(email, firstName, lastName));
+    public void addCustomer(String firstName, String lastName, String email){
+        customerMap.put(email, new Customer(firstName, lastName, email));
     }
 
     public Customer getCustomer (String customerEmail){
