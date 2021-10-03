@@ -4,6 +4,7 @@ public class Room implements IRoom{
     private String roomNumber;
     private Double price;
     private RoomType roomType;
+    private boolean free;
 
 
     //Add a constructor?
@@ -11,14 +12,22 @@ public class Room implements IRoom{
     public Room (){
 
     }
-    public Room (String roomNumber, Double price, RoomType roomType){
+    public Room (String roomNumber, Double price, RoomType roomType, boolean free){
         this.roomType= roomType;
         this.roomNumber = roomNumber;
         this.price = price;
+        this.free = true;
     }
 
     public String toString(){
-        return "Room number " + roomNumber + " Price:  $" + price + " Room type " + roomType;
+        String print = "";
+     if (isFree()){
+         print = "Room number " + roomNumber + " Price:  $" + 0.00 + " Room type " + roomType;
+        }
+     else{
+         print = "Room number " + roomNumber + " Price:  $" + price + " Room type " + roomType;
+     }
+     return print;
     }
 
     public String getRoomNumber(){
@@ -36,7 +45,17 @@ public class Room implements IRoom{
 
     @Override
     public boolean isFree() {
-       return true;
+       return free;
+    }
+
+    public boolean setFree(){
+        if(free){
+            free = false;
+        }
+        else {
+            free = true;
+        }
+        return free;
     }
 
 

@@ -1,11 +1,7 @@
 package api;
 
+import model.Room;
  import java.util.Scanner;
- import java.io.*;
- import service.ReservationService;
- import service.CustomerService;
-
- import javax.lang.model.type.NullType;
  import java.util.Date;
  import java.util.*;
  import java.text.*;
@@ -55,7 +51,7 @@ public class MainMenu {
                         System.out.println("Customer did not register yet. Please use menu 3 to create an account first.");
                         break;
                     }
-                    
+
 
                     System.out.println("Please enter check in date(format MMM-dd-yyyy):");
                     String checkInDate = kb.nextLine();
@@ -70,7 +66,8 @@ public class MainMenu {
 
 
                     } catch (ParseException e) {
-                        System.out.println("Parsing exception" + e);
+                        System.out.println("Please enter valid dates in the format MMM-dd-yyyy");
+                        break;
                     }
 
                     if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
@@ -82,8 +79,18 @@ public class MainMenu {
                         System.out.println("Which available room would you like to reserve?(Please enter room number:)");
                         String roomNumber = kb.nextLine();
                         //Book the room.
-                        HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
 
+                        try {
+                            HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
+
+                            //Mark the room as no longer free
+                            Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
+                            bookedRoom.setFree();
+                        }
+                        catch (NullPointerException e) {
+                            System.out.println ("Room " + roomNumber + " does not exist. Returning to main menu...");
+                            break;
+                        }
                         System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
 
                     }

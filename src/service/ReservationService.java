@@ -1,5 +1,5 @@
 package service;
-
+import java.time.LocalDate;
 import model.IRoom;
 import model.Room;
 import model.Reservation;
@@ -45,9 +45,29 @@ public final class ReservationService {
   public Reservation reserveARoom (Customer customer, IRoom room, Date checkInDate, Date checkOutDate ){
       //Add the new reservation to the set of reservations.
       Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
-      customerReservation.add(reservation);
-      //Remove the room that was just reserved from the list of available rooms.
-      availableRooms.remove(room);
+      for (Reservation reserve: customerReservation){
+          if (reserve.getRoom().equals(reservation.getRoom())){
+              if(checkInDate.before(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckInDate())){
+                  customerReservation.add(reservation);
+                  //Remove the room that was just reserved from the list of available rooms.
+                  availableRooms.remove(room);
+              }
+              else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate())){
+                 System.out.print("This room is already booked for the chosen");
+                 break;
+              }
+              else if (checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckOutDate())){
+                  System.out.print("This room is already booked for the chosen");
+                  break;
+              }
+              else if(checkInDate.after(reservation.getCheckInDate())){
+                  customerReservation.add(reservation);
+                  //Remove the room that was just reserved from the list of available rooms.
+                  availableRooms.remove(room);
+              }
+          }
+      }
+
       return reservation;
 
   }
@@ -70,20 +90,40 @@ public final class ReservationService {
                   if (checkOutDate.before(reservation.getCheckOutDate())) {
                       availableRooms.add(room);
                   }
-              } else if (checkInDate.after(checkOutDate)) {
+              }
+              else if (checkInDate.after(reservation.getCheckOutDate())) {
                   availableRooms.add(room);
               }
-              else {
+
+              else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate())){
+                  System.out.println("Room booked for this period");
+              }
+
                   //Also add each room from the big room Map that is not in the reservation list.
                   for (IRoom mapRoom : roomMap.values()) {
                       if (!room.equals(mapRoom)&& !availableRooms.contains(mapRoom)) {
                           availableRooms.add(mapRoom);
                       }
                   }
-              }
+
           }
       }
-
+      //If available rooms list is still empty, add 7 days to the search
+      if (availableRooms.isEmpty()){
+          boolean tryAgain = true;
+          do {
+              //Convert my dates to local dates and add 7 days.
+              LocalDate checkIn = new java.sql.Date(checkInDate.getTime()).toLocalDate();
+              checkIn = checkIn.plusDays(7);
+              LocalDate checkOut = new java.sql.Date(checkInDate.getTime()).toLocalDate();
+              checkOut = checkOut.plusDays(7);
+              //Convert them back to dates before calling the function again.
+              Date newCheckIn = java.sql.Date.valueOf(checkIn);
+              Date newCheckOut = java.sql.Date.valueOf(checkOut);
+              findRooms(newCheckIn, newCheckOut);
+              tryAgain = false;
+          }while (tryAgain);
+      }
      //Return the list of available rooms.
       return availableRooms;
   }

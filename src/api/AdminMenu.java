@@ -88,9 +88,10 @@ public class AdminMenu {
                 RoomType roomType = null;
                 //Check for valid input:
                 roomType = getMyRoomType();
+                //Set the room free by default
 
                 //Create the new room with the information from the user, and add it to the list.
-                IRoom newRoom = new Room(roomNumber, price, roomType);
+                IRoom newRoom = new Room(roomNumber, price, roomType, true);
                 rooms.add (newRoom);
                 AdminResource.getInstance().addRooms(rooms);
                 System.out.println("Room " + roomNumber + " successfully added!" );
@@ -116,8 +117,7 @@ public class AdminMenu {
                 return userInput;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number:");
-                //kb.nextLine();
-                //e.printStackTrace();
+
             }
         }
     }
