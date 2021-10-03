@@ -65,6 +65,10 @@ public final class ReservationService {
                   //Remove the room that was just reserved from the list of available rooms.
                   availableRooms.remove(room);
               }
+              else if (checkInDate.compareTo(reservation.getCheckInDate())== 0){
+                  System.out.print("This room is already booked for the chosen");
+                  break;
+              }
           }
       }
 

@@ -28,9 +28,15 @@ public class MainMenu {
                 "5. Exit" + "\n");
       System.out.println ("========================================================");
       System.out.println("Please enter a number for the menu item to be accessed:");
+      int response = 0;
+      if (kb.hasNextInt()) {
+          response = kb.nextInt();
+      }
+      else {
+          kb.nextLine();
+      }
+          return response;
 
-      int response = kb.nextInt();
-      return response;
     }
     public void startActions() {
         while (keepRun) {

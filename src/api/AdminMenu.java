@@ -79,9 +79,10 @@ public class AdminMenu {
                 //The newly created room would need to be added  to the list of rooms, before that list is passed.
                 System.out.println("Please enter the room number:");
                 String roomNumber = getUserInputForRoom();
+
                 System.out.println("Please enter the room price:");
                 Double price = getUserInputForPrice();
-                kb.nextLine();
+                //kb.nextLine();
 
                 //Try to get the room type from the user input
                 System.out.println("Please enter the room type (Enter exactly either 'SINGLE' or 'DOUBLE':");
@@ -114,6 +115,13 @@ public class AdminMenu {
                 String userInput = kb.nextLine();
                 int input = 0;
                 Integer.parseInt(userInput);
+                for (IRoom room: AdminResource.getInstance().getAllRooms()){
+                    while  (userInput.compareTo(room.getRoomNumber()) == 0){
+                        System.out.println("This room number is already used. Please try another one:");
+                        userInput = kb.nextLine();
+
+                    }
+                }
                 return userInput;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number:");
@@ -128,6 +136,7 @@ public class AdminMenu {
                 String userInput = kb.nextLine();
                 Double input = 0.00;
                 input = Double.parseDouble(userInput);
+
                 return input;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number of type double:");
