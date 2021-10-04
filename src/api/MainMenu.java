@@ -1,6 +1,7 @@
 package api;
 
 import model.Room;
+import model.Reservation;
  import java.util.Scanner;
  import java.util.Date;
  import java.util.*;
@@ -78,7 +79,9 @@ public class MainMenu {
 
                     if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
                         System.out.println("No room available for the dates selected.");
-                    } else {
+                    }
+
+                    else {
                         //Add this customer to the list of customers.
 
                         System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
@@ -88,16 +91,23 @@ public class MainMenu {
 
                         try {
                             HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
+                            if ( HotelResource.getInstance().getCustomersReservation(email) == null){
+                               System.out.println("Please choose a room from the list of available rooms.");
 
-                            //Mark the room as no longer free
-                            Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
-                            bookedRoom.setFree();
+                            }
+                            else{
+
+                                //System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
+                                //Mark the room as no longer free
+                                Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
+                                bookedRoom.setFree();
+                            }
                         }
                         catch (NullPointerException e) {
                             System.out.println ("Room " + roomNumber + " does not exist. Returning to main menu...");
                             break;
                         }
-                        System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
+
 
                     }
                     break;
@@ -112,6 +122,7 @@ public class MainMenu {
                     if (HotelResource.getInstance().getCustomersReservation(customerEmail).isEmpty()){//Check if there is no reservation.
                         System.out.println("No reservation was made using this email address:" + customerEmail);
                     }
+
                     else {
                         //Get the customer's reservation using their email.
                         System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
@@ -129,7 +140,7 @@ public class MainMenu {
                     System.out.println("Please enter your email address:");
                     String emailAddress = kb.nextLine();
                     HotelResource.getInstance().CreateACustomer(firstName, lastName, emailAddress);
-                    System.out.println("Account for customer " + firstName + " " + lastName + " successfully created");
+                    System.out.println("Account for customer " + firstName + " " + lastName + " successfully created.");
                     break;
 
                 case 4:

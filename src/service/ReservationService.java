@@ -44,35 +44,44 @@ public final class ReservationService {
 
   public Reservation reserveARoom (Customer customer, IRoom room, Date checkInDate, Date checkOutDate ){
       //Add the new reservation to the set of reservations.
-      Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
-      for (Reservation reserve: customerReservation){
-          if (reserve.getRoom().equals(reservation.getRoom())){
-              if(checkInDate.before(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckInDate())){
-                  customerReservation.add(reservation);
+      Reservation newReservation = new Reservation(customer, room, checkInDate, checkOutDate);
+      if(customerReservation.isEmpty()){
+          customerReservation.add(newReservation);
+      }
+      else if (!customerReservation.isEmpty()){
+      for (Reservation existingReservation: customerReservation) {
+          if (existingReservation.getRoom().getRoomNumber().equals(newReservation.getRoom().getRoomNumber())) {
+              //compare room numbers
+              if (checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate())) {
+                  customerReservation.add(newReservation);
                   //Remove the room that was just reserved from the list of available rooms.
                   availableRooms.remove(room);
-              }
-              else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate())){
-                 System.out.print("This room is already booked for the chosen");
-                 break;
-              }
-              else if (checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckOutDate())){
-                  System.out.print("This room is already booked for the chosen");
+
+                  //Reserve: existing reservation changed to existingReservation.
+              } else if (checkInDate.after(existingReservation.getCheckInDate()) && checkInDate.before(existingReservation.getCheckOutDate())) {
+                  System.out.println("This room is already booked for the chosen date");
+                  newReservation = null;
                   break;
-              }
-              else if(checkInDate.after(reservation.getCheckInDate())){
-                  customerReservation.add(reservation);
+              } else if (checkOutDate.after(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckOutDate())) {
+                  System.out.println("This room is already booked for the chosen date");
+                  newReservation = null;
+                  break;
+              } else if (checkInDate.after(existingReservation.getCheckInDate())) {
+                  customerReservation.add(newReservation);
                   //Remove the room that was just reserved from the list of available rooms.
                   availableRooms.remove(room);
-              }
-              else if (checkInDate.compareTo(reservation.getCheckInDate())== 0){
-                  System.out.print("This room is already booked for the chosen");
+              } else if (checkInDate.compareTo(existingReservation.getCheckInDate()) == 0) {
+                  System.out.print("This room is already booked for the chosen date.");
+                  newReservation = null;
                   break;
               }
           }
       }
 
-      return reservation;
+      }
+      else {customerReservation.add(newReservation);}
+
+      return newReservation;
 
   }
 
@@ -117,6 +126,7 @@ public final class ReservationService {
           boolean tryAgain = true;
           do {
               //Convert my dates to local dates and add 7 days.
+              System.out.println("No room found. Searching during the next period of time after 7 days... ");
               LocalDate checkIn = new java.sql.Date(checkInDate.getTime()).toLocalDate();
               checkIn = checkIn.plusDays(7);
               LocalDate checkOut = new java.sql.Date(checkInDate.getTime()).toLocalDate();
