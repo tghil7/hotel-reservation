@@ -73,7 +73,7 @@ public class MainMenu {
 
 
                     } catch (ParseException e) {
-                        System.out.println("Please enter valid dates in the format MMM-dd-yyyy");
+                        System.out.println("Please enter valid dates in the format MMM-dd-yyyy.");
                         break;
                     }
 
@@ -83,7 +83,7 @@ public class MainMenu {
 
                     else {
                         //Add this customer to the list of customers.
-
+                        String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
                         System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
                         System.out.println("Which available room would you like to reserve?(Please enter room number:)");
                         String roomNumber = kb.nextLine();
@@ -119,13 +119,15 @@ public class MainMenu {
                     String customerEmail = kb.nextLine();
 
                     //call the hotel resource customer reservation method.
-                    if (HotelResource.getInstance().getCustomersReservation(customerEmail).isEmpty()){//Check if there is no reservation.
-                        System.out.println("No reservation was made using this email address:" + customerEmail);
-                    }
-
-                    else {
-                        //Get the customer's reservation using their email.
+                    try{//Check if there is no reservation.
                         System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
+
+                    }
+                    catch (NullPointerException e){
+                        System.out.println("No reservation was made using this email address:" + customerEmail);
+                        //Get the customer's reservation using their email.
+                       // System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail));
+                       // System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
                     }
 
                     break;

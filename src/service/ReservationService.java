@@ -49,6 +49,7 @@ public final class ReservationService {
           customerReservation.add(newReservation);
       }
       else if (!customerReservation.isEmpty()){
+          outerloop:
       for (Reservation existingReservation: customerReservation) {
           if (existingReservation.getRoom().getRoomNumber().equals(newReservation.getRoom().getRoomNumber())) {
               //compare room numbers
@@ -76,10 +77,16 @@ public final class ReservationService {
                   break;
               }
           }
+          else if (!(checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate()))){
+              customerReservation.add(newReservation);
+               break outerloop;
+
+          }
+
       }
 
       }
-      else {customerReservation.add(newReservation);}
+
 
       return newReservation;
 
@@ -96,16 +103,15 @@ public final class ReservationService {
               }
           }
       }
-      else {
+      else if (!customerReservation.isEmpty()){
           for (Reservation reservation : customerReservation) {
-              IRoom room = reservation.getRoom();
-              if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(room))) {
+              if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(reservation.getRoom()))) {
                   if (checkOutDate.before(reservation.getCheckOutDate())) {
-                      availableRooms.add(room);
+                      availableRooms.add(reservation.getRoom());
                   }
               }
               else if (checkInDate.after(reservation.getCheckOutDate())) {
-                  availableRooms.add(room);
+                  availableRooms.add(reservation.getRoom());
               }
 
               else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate())){
@@ -114,7 +120,7 @@ public final class ReservationService {
 
                   //Also add each room from the big room Map that is not in the reservation list.
                   for (IRoom mapRoom : roomMap.values()) {
-                      if (!room.equals(mapRoom)&& !availableRooms.contains(mapRoom)) {
+                      if (reservation.getRoom().getRoomNumber().equals(mapRoom.getRoomNumber())&& !(availableRooms.contains(reservation.getRoom()))) {
                           availableRooms.add(mapRoom);
                       }
                   }
@@ -122,11 +128,11 @@ public final class ReservationService {
           }
       }
       //If available rooms list is still empty, add 7 days to the search
-      if (availableRooms.isEmpty()){
+      else {
           boolean tryAgain = true;
           do {
               //Convert my dates to local dates and add 7 days.
-              System.out.println("No room found. Searching during the next period of time after 7 days... ");
+              System.out.println("No room found. Searching during the same period of time after 7 days... ");
               LocalDate checkIn = new java.sql.Date(checkInDate.getTime()).toLocalDate();
               checkIn = checkIn.plusDays(7);
               LocalDate checkOut = new java.sql.Date(checkInDate.getTime()).toLocalDate();
@@ -148,6 +154,7 @@ public final class ReservationService {
 
       for (Reservation reservation: customerReservation){
           if (reservation.getCustomer(customer.getEmail()).equals(customer) && !(customerReservationList.contains(reservation))){
+             // System.out.println("Is this the same customer? : " + reservation.getCustomer(customer.getEmail()).equals(customer));
               customerReservationList.add(reservation);
           }
       }
