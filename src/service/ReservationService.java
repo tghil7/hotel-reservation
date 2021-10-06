@@ -49,14 +49,13 @@ public final class ReservationService {
           customerReservation.add(newReservation);
       }
       else if (!customerReservation.isEmpty()){
-          outerloop:
       for (Reservation existingReservation: customerReservation) {
           if (existingReservation.getRoom().getRoomNumber().equals(newReservation.getRoom().getRoomNumber())) {
               //compare room numbers
               if (checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate())) {
                   customerReservation.add(newReservation);
                   //Remove the room that was just reserved from the list of available rooms.
-                  availableRooms.remove(room);
+                  //availableRooms.remove(room);
 
                   //Reserve: existing reservation changed to existingReservation.
               } else if (checkInDate.after(existingReservation.getCheckInDate()) && checkInDate.before(existingReservation.getCheckOutDate())) {
@@ -70,7 +69,7 @@ public final class ReservationService {
               } else if (checkInDate.after(existingReservation.getCheckInDate())) {
                   customerReservation.add(newReservation);
                   //Remove the room that was just reserved from the list of available rooms.
-                  availableRooms.remove(room);
+                  //availableRooms.remove(room);
               } else if (checkInDate.compareTo(existingReservation.getCheckInDate()) == 0) {
                   System.out.print("This room is already booked for the chosen date.");
                   newReservation = null;
@@ -79,7 +78,6 @@ public final class ReservationService {
           }
           else if (!(checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate()))){
               customerReservation.add(newReservation);
-               break outerloop;
 
           }
 

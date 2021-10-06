@@ -107,6 +107,10 @@ public class MainMenu {
                             System.out.println ("Room " + roomNumber + " does not exist. Returning to main menu...");
                             break;
                         }
+                        catch (ConcurrentModificationException ce){
+                            System.out.println("This room is already booked for the period chosen.");
+                            break;
+                        }
 
 
                     }
