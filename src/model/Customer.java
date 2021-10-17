@@ -15,19 +15,24 @@ public class Customer {
         return "First name : " + firstName + " Last Name: " + lastName + " Email address: " + email;
     }
 
-    String emailRegex = "^(.+)@(.+).(.+)$";
+    final String emailRegex = "^(.+)@(.+).(.+)$";
     Pattern pattern = Pattern.compile(emailRegex);
 
 
 
     public Customer(String firstName, String lastName, String email) throws IllegalArgumentException{
+        checkEmailValidity(email);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    public boolean checkEmailValidity(String email){
         if (!pattern.matcher(email).matches()){
             throw new IllegalArgumentException("Invalid email format. Please try again");
 
         }
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+        else return true;
     }
 
     public String getFirstName(){

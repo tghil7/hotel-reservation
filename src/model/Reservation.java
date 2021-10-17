@@ -2,6 +2,7 @@ package model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Reservation {
     private Customer customer;
@@ -44,6 +45,18 @@ public class Reservation {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(room,checkInDate, checkOutDate);
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        Reservation otherReservation = (Reservation) obj;
+        return ((this == otherReservation) ||(this.room == otherReservation.room && this.checkInDate == otherReservation.checkInDate && this.checkOutDate == otherReservation.checkOutDate));
+
     }
 
     public void setRoom(IRoom room) {

@@ -10,7 +10,10 @@ import java.util.HashMap;
 public class CustomerService {
     //Static reference
 
-    private static CustomerService  customerService = new CustomerService();
+    private static final  CustomerService  customerService = new CustomerService();
+
+    //Make constructors private
+    private CustomerService(){}
     public static CustomerService getInstance(){
         return customerService;
     }

@@ -6,6 +6,7 @@ import model.Reservation;
  import java.util.Date;
  import java.util.*;
  import java.text.*;
+import java.util.regex.Pattern;
 
 public class MainMenu {
 
@@ -144,7 +145,13 @@ public class MainMenu {
                     System.out.println("Please enter your last name");
                     String lastName = kb.nextLine();
                     System.out.println("Please enter your email address:");
-                    String emailAddress = kb.nextLine();
+                    String emailAddress = "";
+                    try {
+                        emailAddress = kb.nextLine();
+                    }
+                    catch(IllegalArgumentException e){
+                      System.out.println("Please enter a valid email address");
+                    }
                     HotelResource.getInstance().CreateACustomer(firstName, lastName, emailAddress);
                     System.out.println("Account for customer " + firstName + " " + lastName + " successfully created.");
                     break;
@@ -168,11 +175,6 @@ public class MainMenu {
         }
     }
     public static void main (String [] args) {
-        System.out.println("Main menu:" +
-                "\n" + "1. Find and reserve a room" + "\n" +
-                "2. See my reservations" + "\n" +
-                "3. Create an account" + "\n" +
-                "4. Admin" + "\n" +
-                "5. Exit" + "\n");
+
     }
 }

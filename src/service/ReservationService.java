@@ -12,9 +12,10 @@ import java.util.Map;
 
 public final class ReservationService {
 
+    //Make constructor private
     private ReservationService(){ }
     //Static reference
-    private static ReservationService reservationService = new ReservationService();
+    private static final  ReservationService reservationService = new ReservationService();
     //Collection to store all rooms
     private Map<String, Room> roomMap  = new HashMap<String, Room>();
 
@@ -38,7 +39,7 @@ public final class ReservationService {
       return reservationService;
   }
 
-  public IRoom getARoom(String roomId){
+  public  IRoom getARoom(String roomId){
       return roomMap.get(roomId);
   }
 
@@ -101,7 +102,7 @@ public final class ReservationService {
               }
           }
       }
-      else if (!customerReservation.isEmpty()){
+      else if (!customerReservation.isEmpty()){//It seems that my code is not going past this step.
           for (Reservation reservation : customerReservation) {
               if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(reservation.getRoom()))) {
                   if (checkOutDate.before(reservation.getCheckOutDate())) {
