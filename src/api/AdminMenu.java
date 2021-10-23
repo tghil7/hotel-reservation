@@ -45,67 +45,87 @@ public class AdminMenu {
 
         switch (action){
             case 1:
-                kb.nextLine();
-                //See all customers;
-                if(AdminResource.getInstance().getAllCustomers().isEmpty()){
-                   System.out.println("No customer added yet.");
-                }
-                else {
-                    System.out.println(AdminResource.getInstance().getAllCustomers().toString());
-                }
+               getAllCustomers();
                 break;
 
             case 2:
-                kb.nextLine();
-                //See all rooms
-                if(AdminResource.getInstance().getAllRooms().isEmpty()){
-                    System.out.println("No room added yet. Please use menu 4 to add a room!");
-                }
-                System.out.println (AdminResource.getInstance().getAllRooms().toString());
+                seeAllRooms();
                 break;
 
             case 3:
-                kb.nextLine();
-                System.out.println("Current reservations:");
-                //See all reservations
-                AdminResource.getInstance().displayAllReservations();
+                seeAllReservations();
                 break;
 
             case 4:
-                //Add a room
-                kb.nextLine();
-                //The Admin resource addRoom method takes a room list as argument.
-                List<IRoom> rooms = new LinkedList<IRoom>();
-                //The newly created room would need to be added  to the list of rooms, before that list is passed.
-                System.out.println("Please enter the room number:");
-                String roomNumber = getUserInputForRoom();
-
-                System.out.println("Please enter the room price:");
-                Double price = getUserInputForPrice();
-                //kb.nextLine();
-
-                //Try to get the room type from the user input
-                System.out.println("Please enter the room type (Enter exactly either 'SINGLE' or 'DOUBLE':");
-                RoomType roomType = null;
-                //Check for valid input:
-                roomType = getMyRoomType();
-                //Set the room free by default
-
-                //Create the new room with the information from the user, and add it to the list.
-                IRoom newRoom = new Room(roomNumber, price, roomType, true);
-                rooms.add (newRoom);
-                AdminResource.getInstance().addRooms(rooms);
-                System.out.println("Room " + roomNumber + " successfully added!" );
+                addARoom();
                 break;
                 
             case 5:
-                kb.nextLine();
-                MainMenu mainMenu = new MainMenu();
-                mainMenu.startActions();
+                returnToMainMenu();
                 break;
 
 
            }
+        }
+    }
+
+    private void returnToMainMenu() {
+        kb.nextLine();
+        MainMenu mainMenu = new MainMenu();
+        mainMenu.startActions();
+    }
+
+    private void addARoom() {
+        //Add a room
+        kb.nextLine();
+        //The Admin resource addRoom method takes a room list as argument.
+        List<IRoom> rooms = new LinkedList<IRoom>();
+        //The newly created room would need to be added  to the list of rooms, before that list is passed.
+        System.out.println("Please enter the room number:");
+        String roomNumber = getUserInputForRoom();
+
+        System.out.println("Please enter the room price:");
+        Double price = getUserInputForPrice();
+        //kb.nextLine();
+
+        //Try to get the room type from the user input
+        System.out.println("Please enter the room type (Enter exactly either 'SINGLE' or 'DOUBLE':");
+        RoomType roomType = null;
+        //Check for valid input:
+        roomType = getMyRoomType();
+        //Set the room free by default
+
+        //Create the new room with the information from the user, and add it to the list.
+        IRoom newRoom = new Room(roomNumber, price, roomType, true);
+        rooms.add (newRoom);
+        AdminResource.getInstance().addRooms(rooms);
+        System.out.println("Room " + roomNumber + " successfully added!" );
+    }
+
+    private void seeAllReservations() {
+        kb.nextLine();
+        System.out.println("Current reservations:");
+        //See all reservations
+        AdminResource.getInstance().displayAllReservations();
+    }
+
+    private void seeAllRooms() {
+        kb.nextLine();
+        //See all rooms
+        if(AdminResource.getInstance().getAllRooms().isEmpty()){
+            System.out.println("No room added yet. Please use menu 4 to add a room!");
+        }
+        System.out.println (AdminResource.getInstance().getAllRooms().toString());
+    }
+
+    private void getAllCustomers() {
+        kb.nextLine();
+        //See all customers;
+        if(AdminResource.getInstance().getAllCustomers().isEmpty()){
+           System.out.println("No customer added yet.");
+        }
+        else {
+            System.out.println(AdminResource.getInstance().getAllCustomers().toString());
         }
     }
 
