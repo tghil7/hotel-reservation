@@ -20,19 +20,28 @@ public final class ReservationService {
     private Map<String, Room> roomMap  = new HashMap<String, Room>();
 
     //Collection to store available rooms;
-    private List<IRoom> availableRooms = new LinkedList<IRoom>();
+    private Collection <IRoom> availableRooms = new LinkedList<IRoom>();
 
     //Collection to store reservations.
-    private Set<Reservation> customerReservation = new HashSet<Reservation>();
+    private Map<String, Collection<Reservation>> customerReservationMap = new HashMap<String, Collection<Reservation>>();
 
     //Collection to store list of reservations for individual customers.
-    List<Reservation> customerReservationList = new ArrayList<>();
+    List<Reservation> customerReservationList = new LinkedList<>();
+    boolean tryAgain = true; //Make sure the 7 in advance search is done once.
 
 
 
   public void addRoom(IRoom room){
      //Make the room free before adding it to the map so it can be found when searching for free rooms.
-      roomMap.put(room.getRoomNumber(), (Room) room);
+      int n = 0;
+      for (Room myRoom: roomMap.values()){
+          if (myRoom.getRoomNumber() == room.getRoomNumber()){
+              n++;
+          }
+      }
+      if (n == 0) {
+          roomMap.put(room.getRoomNumber(), (Room) room);
+      }
   }
 
   public static ReservationService getInstance(){
@@ -46,89 +55,108 @@ public final class ReservationService {
   public Reservation reserveARoom (Customer customer, IRoom room, Date checkInDate, Date checkOutDate ){
       //Add the new reservation to the set of reservations.
       Reservation newReservation = new Reservation(customer, room, checkInDate, checkOutDate);
-      if(customerReservation.isEmpty()){
-          customerReservation.add(newReservation);
-      }
-      else if (!customerReservation.isEmpty()){
-      for (Reservation existingReservation: customerReservation) {
-          if (existingReservation.getRoom().getRoomNumber().equals(newReservation.getRoom().getRoomNumber())) {
-              //compare room numbers
-              if (checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate())) {
-                  customerReservation.add(newReservation);
-                  //Remove the room that was just reserved from the list of available rooms.
-                  //availableRooms.remove(room);
 
-                  //Reserve: existing reservation changed to existingReservation.
-              } else if (checkInDate.after(existingReservation.getCheckInDate()) && checkInDate.before(existingReservation.getCheckOutDate())) {
-                  System.out.println("This room is already booked for the chosen date");
-                  newReservation = null;
-                  break;
-              } else if (checkOutDate.after(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckOutDate())) {
-                  System.out.println("This room is already booked for the chosen date");
-                  newReservation = null;
-                  break;
-              } else if (checkInDate.after(existingReservation.getCheckInDate())) {
-                  customerReservation.add(newReservation);
-                  //Remove the room that was just reserved from the list of available rooms.
-                  //availableRooms.remove(room);
-              } else if (checkInDate.compareTo(existingReservation.getCheckInDate()) == 0) {
-                  System.out.print("This room is already booked for the chosen date.");
-                  newReservation = null;
-                  break;
+      Collection <Reservation> customerReservationList = getCustomersReservation(customer);//Get the individual list of reservations.
+      if (customerReservationList ==null){
+          customerReservationList = new LinkedList<>();
+      }
+      if (customerReservationMap.isEmpty()) {
+          customerReservationList.add(newReservation);
+          customerReservationMap.put(customer.getEmail(), customerReservationList);
+      }
+      else if (!customerReservationMap.isEmpty()){
+        for (Collection existingReservationCollection: customerReservationMap.values()) { //Loop through the collection reservation from the map
+          //Cast the collection object into a linked list.
+          LinkedList<Reservation> existingReserveCollection = (LinkedList<Reservation>) existingReservationCollection;
+          for (Reservation existingReservation: existingReserveCollection){
+              if (existingReservation.equals(newReservation)) {
+               availableRooms = findRooms(checkInDate, checkOutDate);
+              }
+
+
+                  //compare rooms
+              else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) && checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate())) {
+                      customerReservationList.add(newReservation);
+                      customerReservationMap.put(customer.getEmail(), customerReservationList);
+                      //Remove the room that was just reserved from the list of available rooms.
+                      //availableRooms.remove(room);
+
+                      //Reserve: existing reservation changed to existingReservation.
+                  }
+              else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) &&checkInDate.after(existingReservation.getCheckInDate()) && checkInDate.before(existingReservation.getCheckOutDate())) {
+                      System.out.println("This room is already booked for the chosen date");
+                      newReservation = null;
+                      break;
+              }
+              else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) && checkOutDate.after(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckOutDate())) {
+                      System.out.println("This room is already booked for the chosen time period");
+                      newReservation = null;
+                      break;
+              }
+              else if (checkInDate.after(existingReservation.getCheckInDate())) {
+                      customerReservationList.add(newReservation);
+                      customerReservationMap.put(customer.getEmail(), customerReservationList);
+                      //Remove the room that was just reserved from the list of available rooms.
+                      //availableRooms.remove(room);
+              }
+              else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) && checkInDate.compareTo(existingReservation.getCheckInDate()) == 0) {
+                      System.out.println("This room is already booked for the chosen period.");
+                      newReservation = null;
+                      break;
+              }
+              else {
+                      customerReservationList.add(newReservation);
+                      customerReservationMap.put(customer.getEmail(), customerReservationList);
               }
           }
-          else if (!(checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate()))){
-              customerReservation.add(newReservation);
 
-          }
-
+       }
       }
-
-      }
-
-
       return newReservation;
 
   }
+
+
+
+
+
+
+
 
   public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
       //Look in the set of reservation, if one of them is available with check in  and check out dates before reservation check
       // , add it to the list of
       //available rooms, and return that list of available rooms.
-      if (customerReservation.isEmpty()){//If there are no reservations, return the full list of rooms
+      if (customerReservationMap.isEmpty()){//If there are no reservations, return the full list of rooms
           for (Room myRoom: roomMap.values()) {
               if(!(availableRooms.contains(myRoom))) {
                   availableRooms.add(myRoom);
               }
           }
       }
-      else if (!customerReservation.isEmpty()){//It seems that my code is not going past this step.
-          for (Reservation reservation : customerReservation) {
-              if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(reservation.getRoom()))) {
-                  if (checkOutDate.before(reservation.getCheckOutDate())) {
+      else if (!customerReservationMap.isEmpty()){//It seems that my code is not going past this step.
+          for (Collection reservationCollection : customerReservationMap.values()) {
+              LinkedList<Reservation> existingReserveCollection = (LinkedList<Reservation>)reservationCollection;
+              for (Reservation reservation : existingReserveCollection) {
+                  if (checkInDate.before(reservation.getCheckInDate()) && !(availableRooms.contains(reservation.getRoom()))) {
+                      if (checkOutDate.before(reservation.getCheckOutDate())) {
+                          availableRooms.add(reservation.getRoom());
+                      }
+                  } else if (checkInDate.after(reservation.getCheckOutDate())) {
                       availableRooms.add(reservation.getRoom());
+                  } else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate())) {
+                      System.out.println("Room" +  reservation.getRoom() +  " booked for this period");
+                      continue;
                   }
-              }
-              else if (checkInDate.after(reservation.getCheckOutDate())) {
-                  availableRooms.add(reservation.getRoom());
-              }
-
-              else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate())){
-                  System.out.println("Room booked for this period");
-              }
 
                   //Also add each room from the big room Map that is not in the reservation list.
-                  for (IRoom mapRoom : roomMap.values()) {
-                      if (reservation.getRoom().getRoomNumber().equals(mapRoom.getRoomNumber())&& !(availableRooms.contains(reservation.getRoom()))) {
-                          availableRooms.add(mapRoom);
-                      }
-                  }
 
+              }
           }
       }
       //If available rooms list is still empty, add 7 days to the search
-      else {
-          boolean tryAgain = true;
+      else if (availableRooms.isEmpty()) {
+
           do {
               //Convert my dates to local dates and add 7 days.
               System.out.println("No room found. Searching during the same period of time after 7 days... ");
@@ -150,18 +178,12 @@ public final class ReservationService {
   //Get the reservation for an individual customer.
   public Collection<Reservation> getCustomersReservation(Customer customer){
       //Loop through all the reservations in the list. For each of them, if the customer matches the customer passed as argument, return it.
+      return customerReservationMap.get(customer.getEmail());
 
-      for (Reservation reservation: customerReservation){
-          if (reservation.getCustomer(customer.getEmail()).equals(customer) && !(customerReservationList.contains(reservation))){
-             // System.out.println("Is this the same customer? : " + reservation.getCustomer(customer.getEmail()).equals(customer));
-              customerReservationList.add(reservation);
-          }
-      }
-      return customerReservationList;
   }
 
   public void printAllReservation(){
-      for (Reservation reservation : customerReservation){
+      for (Collection reservation  : customerReservationMap.values()){
          System.out.println(reservation.toString());
       }
   }

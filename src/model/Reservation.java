@@ -55,7 +55,7 @@ public class Reservation {
     @Override
     public boolean equals(Object obj){
         Reservation otherReservation = (Reservation) obj;
-        return ((this == otherReservation) ||(this.room == otherReservation.room && this.checkInDate == otherReservation.checkInDate && this.checkOutDate == otherReservation.checkOutDate));
+        return ((this.room == otherReservation.room && this.checkInDate == otherReservation.checkInDate && this.checkOutDate == otherReservation.checkOutDate));
 
     }
 

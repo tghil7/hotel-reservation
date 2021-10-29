@@ -47,6 +47,7 @@ public class MainMenu {
 
             switch (action) {
                 case 1:
+                    //Find and reserve a room
                     findAndReserveRoom();
                     break;
                 case 2:
@@ -59,6 +60,7 @@ public class MainMenu {
                     break;
 
                 case 4:
+                    //Go to admin menu
                     callAdminMenu();
                     break;
                 case 5:
@@ -177,10 +179,11 @@ public class MainMenu {
                 }
                 else{
 
-                    //System.out.println("Room " + roomNumber + " successfully reserved! We look forward to seeing you on " + checkInDate);
+
                     //Mark the room as no longer free
                     Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
                     bookedRoom.setFree();
+
                 }
             }
             catch (NullPointerException e) {
@@ -190,6 +193,12 @@ public class MainMenu {
             catch (ConcurrentModificationException ce){
                 System.out.println("This room is already booked for the period chosen.Please select another available room.\n");
                 return;
+            }
+
+            finally {
+                if (HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut) != null){
+                    System.out.println("Room " + roomNumber + " successfully reserved. We look forward to seeing you on " + checkInDate);
+                }
             }
 
 
