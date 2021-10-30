@@ -61,8 +61,7 @@ public final class ReservationService {
           customerReservationList = new LinkedList<>();
       }
       if (customerReservationMap.isEmpty()) {
-          customerReservationList.add(newReservation);
-          customerReservationMap.put(customer.getEmail(), customerReservationList);
+          addNewReservation(customer, newReservation, customerReservationList);
       }
       else if (!customerReservationMap.isEmpty()){
         for (Collection existingReservationCollection: customerReservationMap.values()) { //Loop through the collection reservation from the map
@@ -76,13 +75,8 @@ public final class ReservationService {
 
                   //compare rooms
               else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) && checkInDate.before(existingReservation.getCheckInDate()) && checkOutDate.before(existingReservation.getCheckInDate())) {
-                      customerReservationList.add(newReservation);
-                      customerReservationMap.put(customer.getEmail(), customerReservationList);
-                      //Remove the room that was just reserved from the list of available rooms.
-                      //availableRooms.remove(room);
-
-                      //Reserve: existing reservation changed to existingReservation.
-                  }
+                  addNewReservation(customer, newReservation, customerReservationList);
+              }
               else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) &&checkInDate.after(existingReservation.getCheckInDate()) && checkInDate.before(existingReservation.getCheckOutDate())) {
                       System.out.println("This room is already booked for the chosen date");
                       newReservation = null;
@@ -94,9 +88,8 @@ public final class ReservationService {
                       break;
               }
               else if (checkInDate.after(existingReservation.getCheckInDate())) {
-                      customerReservationList.add(newReservation);
-                      customerReservationMap.put(customer.getEmail(), customerReservationList);
-                      //Remove the room that was just reserved from the list of available rooms.
+                  addNewReservation(customer, newReservation, customerReservationList);
+                  //Remove the room that was just reserved from the list of available rooms.
                       //availableRooms.remove(room);
               }
               else if ((existingReservation.getRoom().getRoomNumber() == room.getRoomNumber()) && checkInDate.compareTo(existingReservation.getCheckInDate()) == 0) {
@@ -105,8 +98,7 @@ public final class ReservationService {
                       break;
               }
               else {
-                      customerReservationList.add(newReservation);
-                      customerReservationMap.put(customer.getEmail(), customerReservationList);
+                  addNewReservation(customer, newReservation, customerReservationList);
               }
           }
 
@@ -116,14 +108,17 @@ public final class ReservationService {
 
   }
 
+    private void addNewReservation(Customer customer, Reservation newReservation, Collection<Reservation> customerReservationList) {
+        customerReservationList.add(newReservation);
+        customerReservationMap.put(customer.getEmail(), customerReservationList);
+        //Remove the room that was just reserved from the list of available rooms.
+        //availableRooms.remove(room);
+
+        //Reserve: existing reservation changed to existingReservation.
+    }
 
 
-
-
-
-
-
-  public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
+    public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
       //Look in the set of reservation, if one of them is available with check in  and check out dates before reservation check
       // , add it to the list of
       //available rooms, and return that list of available rooms.
@@ -159,15 +154,7 @@ public final class ReservationService {
 
           do {
               //Convert my dates to local dates and add 7 days.
-              System.out.println("No room found. Searching during the same period of time after 7 days... ");
-              LocalDate checkIn = new java.sql.Date(checkInDate.getTime()).toLocalDate();
-              checkIn = checkIn.plusDays(7);
-              LocalDate checkOut = new java.sql.Date(checkInDate.getTime()).toLocalDate();
-              checkOut = checkOut.plusDays(7);
-              //Convert them back to dates before calling the function again.
-              Date newCheckIn = java.sql.Date.valueOf(checkIn);
-              Date newCheckOut = java.sql.Date.valueOf(checkOut);
-              findRooms(newCheckIn, newCheckOut);
+              getReservationWithNewDates(checkInDate, checkOutDate);
               tryAgain = false;
           }while (tryAgain);
       }
@@ -175,7 +162,19 @@ public final class ReservationService {
       return availableRooms;
   }
 
-  //Get the reservation for an individual customer.
+    private void getReservationWithNewDates(Date checkInDate, Date checkOutDate) {
+        System.out.println("No room found. Searching during the same period of time after 7 days... ");
+        LocalDate checkIn = new java.sql.Date(checkInDate.getTime()).toLocalDate();
+        checkIn = checkIn.plusDays(7);
+        LocalDate checkOut = new java.sql.Date(checkOutDate.getTime()).toLocalDate();
+        checkOut = checkOut.plusDays(7);
+        //Convert them back to date before calling the function again.
+        Date newCheckIn = java.sql.Date.valueOf(checkIn);
+        Date newCheckOut = java.sql.Date.valueOf(checkOut);
+        findRooms(newCheckIn, newCheckOut);
+    }
+
+    //Get the reservation for an individual customer.
   public Collection<Reservation> getCustomersReservation(Customer customer){
       //Loop through all the reservations in the list. For each of them, if the customer matches the customer passed as argument, return it.
       return customerReservationMap.get(customer.getEmail());

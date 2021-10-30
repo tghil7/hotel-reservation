@@ -49,13 +49,13 @@ public class Reservation {
 
     @Override
     public int hashCode(){
-        return Objects.hash(room,checkInDate, checkOutDate);
+        return Objects.hash(customer,room,checkInDate, checkOutDate);
     }
 
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(final Object obj){
         Reservation otherReservation = (Reservation) obj;
-        return ((this.room == otherReservation.room && this.checkInDate == otherReservation.checkInDate && this.checkOutDate == otherReservation.checkOutDate));
+        return (room.equals(otherReservation.room) && checkInDate.equals(otherReservation.checkInDate) && checkOutDate.equals(otherReservation.checkOutDate) && customer.equals(otherReservation.customer));
 
     }
 
