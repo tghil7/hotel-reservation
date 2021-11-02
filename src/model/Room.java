@@ -48,7 +48,7 @@ public class Room implements IRoom{
        return free;
     }
 
-    public boolean setFree(){
+    public boolean setBusy(){
         if(free){
             free = false;
         }

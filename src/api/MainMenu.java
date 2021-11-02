@@ -124,7 +124,7 @@ public class MainMenu {
            // System.out.println(HotelResource.getInstance().getCustomersReservation(customerEmail).toString());
         }
 
-        return;
+
     }
 
     private void findAndReserveRoom() {
@@ -156,7 +156,7 @@ public class MainMenu {
 
         } catch (ParseException e) {
             System.out.println("Please enter valid dates in the format MMM-dd-yyyy.");
-            return;
+
         }
 
         if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
@@ -167,7 +167,7 @@ public class MainMenu {
             //Add this customer to the list of customers.
             String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
             System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
-            System.out.println("Which available room would you like to reserve?(Please enter room number:)");
+            System.out.println("Which room would you like to reserve?(Please enter room number:)");
             String roomNumber = kb.nextLine();
             //Book the room.
 
@@ -175,24 +175,22 @@ public class MainMenu {
                 HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
                 if ( HotelResource.getInstance().getCustomersReservation(email) == null){
                    System.out.println("Please choose a room from the list of available rooms.");
-
+                   return;
                 }
                 else{
-
-
                     //Mark the room as no longer free
                     Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
-                    bookedRoom.setFree();
+                    bookedRoom.setBusy();
 
                 }
             }
             catch (NullPointerException e) {
                 System.out.println ("Room " + roomNumber + " does not exist. Returning to main menu...");
-                return;
+
             }
             catch (ConcurrentModificationException ce){
-                System.out.println("This room is already booked for the period chosen.Please select another available room.\n");
-                return;
+                System.out.println("Concurrent modification exception "+ ce);
+
             }
 
             finally {
@@ -203,7 +201,7 @@ public class MainMenu {
 
 
         }
-        return;
+
     }
 
 
