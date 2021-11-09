@@ -194,7 +194,7 @@ public class MainMenu {
             }
 
             finally {
-                if (HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut) != null){
+                if (HotelResource.getInstance().getCustomersReservation(email) != null){
                     System.out.println("Room " + roomNumber + " successfully reserved. We look forward to seeing you on " + checkInDate);
                 }
             }
