@@ -165,7 +165,7 @@ public class MainMenu {
 
         else {
             //Add this customer to the list of customers.
-            String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
+            //String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
             System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
             System.out.println("Which room would you like to reserve?(Please enter room number:)");
             String roomNumber = kb.nextLine();
@@ -181,6 +181,7 @@ public class MainMenu {
                     //Mark the room as no longer free
                     Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
                     bookedRoom.setBusy();
+                    System.out.println("Room " + roomNumber + " successfully reserved. We look forward to seeing you on " + checkInDate);
 
                 }
             }
@@ -189,15 +190,11 @@ public class MainMenu {
 
             }
             catch (ConcurrentModificationException ce){
-                System.out.println("Concurrent modification exception "+ ce);
+                System.out.println("Concurrent modification exception : This room is already booked. "+ ce);
 
             }
 
-            finally {
-                if (HotelResource.getInstance().getCustomersReservation(email) != null){
-                    System.out.println("Room " + roomNumber + " successfully reserved. We look forward to seeing you on " + checkInDate);
-                }
-            }
+
 
 
         }
