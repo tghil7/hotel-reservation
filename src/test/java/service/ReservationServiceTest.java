@@ -48,7 +48,5 @@ class ReservationServiceTest {
     void getAllRooms() {
     }
 
-    @Test
-    void main() {
-    }
+
 }

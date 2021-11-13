@@ -133,6 +133,7 @@ public final class ReservationService {
 
 
     public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
+
       //Variable m to keep track of the state
         int m = 0;
       //Look in the set of reservation, if one of them is available with check in  and check out dates before reservation check
@@ -147,17 +148,19 @@ public final class ReservationService {
           }
       }
     else if (!customerReservationMap.isEmpty()) {
+        //For each search, make sure that the list of available rooms is empty initially when there are existing reservations.
+        availableRooms.clear();
         //Check if the room is not reserved for that date, return it
         for (Collection reservationCollection : customerReservationMap.values()) {
-            LinkedList<Reservation> existingReserveCollection = new LinkedList<>();
-            try {
-                for (Object o : reservationCollection) {
-                    existingReserveCollection.add(cast(0));
-                }
-            } catch (ClassCastException ca) {
-                System.out.println("Unable to cast the collection into a linked list");
-            }
+            LinkedList<Reservation> existingReserveCollection = new LinkedList<Reservation>(reservationCollection);
+
             for (Reservation reservation : existingReserveCollection) {
+                for (Room room : roomMap.values()){
+                    if ((!reservation.getRoom().getRoomNumber().equals(room.getRoomNumber())) && (!availableRooms.contains(room))){
+                        System.out.print("Is this the same room?: " + reservation.getRoom().getRoomNumber().equals(room.getRoomNumber()));
+                        availableRooms.add(room);
+                    }
+                }
                 if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
                     m++;
                     availableRooms.remove(reservation.getRoom());
@@ -166,24 +169,31 @@ public final class ReservationService {
                     m++;
                     availableRooms.remove(reservation.getRoom());
                 }
-                else if (m==0){
-                    availableRooms.add(reservation.getRoom());
+
+                else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())){
+                    m++;
+                    availableRooms.remove(reservation.getRoom());
                 }
+
+
+
             }
 
+        }
+
+         if (!customerReservationMap.isEmpty() && availableRooms.isEmpty()) {
+
+            do {
+                //Convert my dates to local dates and add 7 days.
+                getReservationWithNewDates(checkInDate, checkOutDate);
+
+            }while (tryAgain);
         }
     }
           //Print the  available rooms
         //System.out.print("Available rooms: " + availableRooms.toString());
         //
-        else if (!customerReservationMap.isEmpty() && availableRooms.isEmpty()) {
 
-              do {
-                  //Convert my dates to local dates and add 7 days.
-                  getReservationWithNewDates(checkInDate, checkOutDate);
-
-              }while (tryAgain);
-          }
 
       //If available rooms list is still empty, add 7 days to the search
 
@@ -200,6 +210,7 @@ public final class ReservationService {
         //Convert them back to date before calling the function again.
         Date newCheckIn = java.sql.Date.valueOf(checkIn);
         Date newCheckOut = java.sql.Date.valueOf(checkOut);
+        System.out.println("Searching with the new check in date : " + newCheckIn.toString() + " and new check out date: " + newCheckOut.toString());
         findRooms(newCheckIn, newCheckOut);
     }
 

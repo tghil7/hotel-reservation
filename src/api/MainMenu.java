@@ -164,7 +164,6 @@ public class MainMenu {
         }
 
         else {
-            //Add this customer to the list of customers.
             //String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
             System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
             System.out.println("Which room would you like to reserve?(Please enter room number:)");
