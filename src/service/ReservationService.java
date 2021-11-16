@@ -133,72 +133,17 @@ public final class ReservationService {
 
 
     public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
-
-      //Variable m to keep track of the state
-        int m = 0;
-      //Look in the set of reservation, if one of them is available with check in  and check out dates before reservation check
-      // , add it to the list of
-      //available rooms, and return that list of available rooms.
-    if (customerReservationMap.isEmpty()){//If there are no reservations, return the full list of rooms
-          for (Room myRoom: roomMap.values()) {
-              if(!(availableRooms.contains(myRoom))) {
-                  availableRooms.add(myRoom);
-                  System.out.println("Initially adding all rooms. ");
-              }
-          }
-      }
-    else if (!customerReservationMap.isEmpty()) {
-        //For each search, make sure that the list of available rooms is empty initially when there are existing reservations.
-        availableRooms.clear();
-        //Check if the room is not reserved for that date, return it
-        for (Collection reservationCollection : customerReservationMap.values()) {
-            LinkedList<Reservation> existingReserveCollection = new LinkedList<Reservation>(reservationCollection);
-
-            for (Reservation reservation : existingReserveCollection) {
-                for (Room room : roomMap.values()){
-                    if ((!reservation.getRoom().getRoomNumber().equals(room.getRoomNumber())) && (!availableRooms.contains(room))){
-                        System.out.print("Is this the same room?: " + reservation.getRoom().getRoomNumber().equals(room.getRoomNumber()));
-                        availableRooms.add(room);
-                    }
-                }
-                if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
-                    m++;
-                    availableRooms.remove(reservation.getRoom());
-                }
-                else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckOutDate())){
-                    m++;
-                    availableRooms.remove(reservation.getRoom());
-                }
-
-                else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())){
-                    m++;
-                    availableRooms.remove(reservation.getRoom());
-                }
-
-
-
-            }
-
-        }
-
-         if (!customerReservationMap.isEmpty() && availableRooms.isEmpty()) {
-
+      //First get free rooms
+        Collection  potentialFreeRooms = getFreeRooms(checkInDate, checkOutDate);
+        if (potentialFreeRooms.isEmpty()){
             do {
                 //Convert my dates to local dates and add 7 days.
                 getReservationWithNewDates(checkInDate, checkOutDate);
 
             }while (tryAgain);
         }
-    }
-          //Print the  available rooms
-        //System.out.print("Available rooms: " + availableRooms.toString());
-        //
 
-
-      //If available rooms list is still empty, add 7 days to the search
-
-     //Return the list of available rooms.
-      return availableRooms;
+      return potentialFreeRooms;
   }
 
     private void getReservationWithNewDates(Date checkInDate, Date checkOutDate) {
@@ -210,7 +155,7 @@ public final class ReservationService {
         //Convert them back to date before calling the function again.
         Date newCheckIn = java.sql.Date.valueOf(checkIn);
         Date newCheckOut = java.sql.Date.valueOf(checkOut);
-        System.out.println("Searching with the new check in date : " + newCheckIn.toString() + " and new check out date: " + newCheckOut.toString());
+        System.out.println("Searching with the new check in date of : " + newCheckIn.toString() + " and new check out date of: " + newCheckOut.toString());
         findRooms(newCheckIn, newCheckOut);
     }
 
@@ -226,6 +171,54 @@ public final class ReservationService {
          System.out.println(reservation.toString());
       }
   }
+
+  //Get all the reserved rooms for the dates entered as input
+    public Collection getAllReservations (Date checkInDate, Date checkOutDate){
+      Collection reservedRooms = new LinkedList<Room>();
+        for (Collection reservationCollection : customerReservationMap.values()) {
+            LinkedList<Reservation> existingReserveCollection = new LinkedList<Reservation>(reservationCollection);
+
+            for (Reservation reservation : existingReserveCollection) {
+                if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
+                    reservedRooms.add(reservation.getRoom());
+                }
+                else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckOutDate())){
+                    reservedRooms.add(reservation.getRoom());
+                }
+
+                else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())){
+                    reservedRooms.add(reservation.getRoom());
+                }
+
+
+
+            }
+
+        }
+      return reservedRooms;
+    }
+
+    //Get all free rooms
+    public Collection getFreeRooms(Date checkInDate, Date checkOutDate){
+      int count = 0;
+        Collection freeRooms = new LinkedList<Room>();
+      for (Room room : roomMap.values()){
+          Collection myReservedRooms = getAllReservations(checkInDate, checkOutDate);
+         if (!myReservedRooms.contains(room)){
+             for (Object bookedRoom : myReservedRooms){
+                 if (((Room)bookedRoom).getRoomNumber() == room.getRoomNumber()){
+                     count++;
+                 }
+             }
+
+             if (count == 0) {
+                 freeRooms.add(room);
+             }
+         }
+      }
+
+        return freeRooms;
+    }
 
   //Return all rooms
     public Collection getAllRooms(){

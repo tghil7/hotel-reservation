@@ -160,7 +160,7 @@ public class MainMenu {
         }
 
         if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
-            System.out.println("No room available for the dates selected.");
+            System.out.println("No room available for the dates selected, or 7 days later.");
         }
 
         else {
