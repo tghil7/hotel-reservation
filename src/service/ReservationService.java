@@ -29,7 +29,7 @@ public final class ReservationService {
 
     //Collection to store list of reservations for individual customers.
     List<Reservation> customerReservationList = new LinkedList<>();
-    boolean tryAgain = false; //Make sure the 7 in advance search is done once.
+    boolean tryAgain = true; //Make sure the 7 in advance search is done once.
 
 
 
@@ -134,13 +134,21 @@ public final class ReservationService {
 
     public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
       //First get free rooms
-        Collection  potentialFreeRooms = getFreeRooms(checkInDate, checkOutDate);
-        if (potentialFreeRooms.isEmpty()){
-            do {
-                //Convert my dates to local dates and add 7 days.
-                getReservationWithNewDates(checkInDate, checkOutDate);
+        Collection potentialFreeRooms = getFreeRooms(checkInDate, checkOutDate);
+        if (customerReservationMap.isEmpty()){
+            for (Room thisRoom: roomMap.values()){
+                potentialFreeRooms.add(thisRoom);
+            }
+        }
+        else if (!customerReservationMap.isEmpty()) {
 
-            }while (tryAgain);
+            if (potentialFreeRooms.isEmpty()) {
+                while (tryAgain) {
+                    //Convert my dates to local dates and add 7 days.
+                    getReservationWithNewDates(checkInDate, checkOutDate);
+                    tryAgain = false;
+                }
+            }
         }
 
       return potentialFreeRooms;
@@ -177,23 +185,32 @@ public final class ReservationService {
       Collection reservedRooms = new LinkedList<Room>();
         for (Collection reservationCollection : customerReservationMap.values()) {
             LinkedList<Reservation> existingReserveCollection = new LinkedList<Reservation>(reservationCollection);
+            if (!existingReserveCollection.isEmpty()) {
+                for (Reservation reservation : existingReserveCollection) {
+                    if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
+                        reservedRooms.add(reservation.getRoom());
+                    } else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
+                        reservedRooms.add(reservation.getRoom());
+                    } else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())) {
+                        reservedRooms.add(reservation.getRoom());
+                    }
+                    else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckInDate())){
+                        reservedRooms.add(reservation.getRoom());
+                    }
+                    else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate())){
+                        reservedRooms.add(reservation.getRoom());
+                    }
+                    else if (checkInDate.after(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckInDate())){
+                        reservedRooms.add(reservation.getRoom());
+                    }
 
-            for (Reservation reservation : existingReserveCollection) {
-                if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
-                    reservedRooms.add(reservation.getRoom());
+
                 }
-                else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckOutDate())){
-                    reservedRooms.add(reservation.getRoom());
-                }
-
-                else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())){
-                    reservedRooms.add(reservation.getRoom());
-                }
-
-
 
             }
-
+            else if (existingReserveCollection.isEmpty()){
+                System.out.println("The list of reservations is empty.");
+            }
         }
       return reservedRooms;
     }
@@ -202,18 +219,21 @@ public final class ReservationService {
     public Collection getFreeRooms(Date checkInDate, Date checkOutDate){
       int count = 0;
         Collection freeRooms = new LinkedList<Room>();
+        Collection myReservedRooms = getAllReservations(checkInDate, checkOutDate);
+        //System.out.println("Reserved rooms: " + myReservedRooms.toString());
       for (Room room : roomMap.values()){
-          Collection myReservedRooms = getAllReservations(checkInDate, checkOutDate);
          if (!myReservedRooms.contains(room)){
              for (Object bookedRoom : myReservedRooms){
                  if (((Room)bookedRoom).getRoomNumber() == room.getRoomNumber()){
-                     count++;
+                    // freeRooms.remove(room);
+                     System.out.println("No need to add the room again for this period");
+                 }
+                 else{
+                     freeRooms.add(room);
                  }
              }
 
-             if (count == 0) {
-                 freeRooms.add(room);
-             }
+
          }
       }
 
