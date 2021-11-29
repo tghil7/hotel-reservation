@@ -2,7 +2,8 @@ package api;
 
 import model.Room;
 import model.Reservation;
- import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.Scanner;
  import java.util.Date;
  import java.util.*;
  import java.text.*;
@@ -160,44 +161,50 @@ public class MainMenu {
         }
 
         if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
-            System.out.println("No room available for the dates selected, or 7 days later.");
+            System.out.println("No room available for the dates selected.Searching for rooms  7 days later.");
+            checkIn = HotelResource.getInstance().getNewDate(checkIn);
+            checkOut = HotelResource.getInstance().getNewDate(checkOut);
+            HotelResource.getInstance().findARoom(checkIn, checkOut);
+            bookTheRoom(email, "7 days from "+ checkInDate);
         }
 
         else {
-            //String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
-            System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
-            System.out.println("Which room would you like to reserve?(Please enter room number:)");
-            String roomNumber = kb.nextLine();
-            //Book the room.
-
-            try {
-                HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
-                if ( HotelResource.getInstance().getCustomersReservation(email) == null){
-                   System.out.println("Please choose a room from the list of available rooms.");
-                   return;
-                }
-                else{
-                    //Mark the room as no longer free
-                    Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
-                    bookedRoom.setBusy();
-                    System.out.println("Room " + roomNumber + " successfully reserved. We look forward to seeing you on " + checkInDate);
-
-                }
-            }
-            catch (NullPointerException e) {
-                System.out.println ("Room " + roomNumber + " does not exist. Returning to main menu...");
-
-            }
-            catch (ConcurrentModificationException ce){
-                System.out.println("Concurrent modification exception : This room is already booked. "+ ce);
-
-            }
-
-
+            bookTheRoom(email, checkInDate);
 
 
         }
 
+    }
+
+    private void bookTheRoom(String email, String checkInDate) {
+        //String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
+        System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
+        System.out.println("Which room would you like to reserve?(Please enter room number:)");
+        String roomNumber = kb.nextLine();
+        //Book the room.
+
+        try {
+            HotelResource.getInstance().bookARoom(email, HotelResource.getInstance().getRoom(roomNumber), checkIn, checkOut);
+            if ( HotelResource.getInstance().getCustomersReservation(email) == null){
+               System.out.println("Please choose a room from the list of available rooms.");
+                return;
+            }
+            else{
+                //Mark the room as no longer free
+                Room bookedRoom = (Room) HotelResource.getInstance().getRoom(roomNumber);
+                bookedRoom.setBusy();
+                System.out.println("Room " + roomNumber + " successfully reserved. We look forward to seeing you on " + checkInDate);
+
+            }
+        }
+        catch (NullPointerException e) {
+            System.out.println ("Room " + roomNumber + " does not exist. Returning to main menu...");
+
+        }
+        catch (ConcurrentModificationException ce){
+            System.out.println("Concurrent modification exception : This room is already booked. "+ ce);
+
+        }
     }
 
 

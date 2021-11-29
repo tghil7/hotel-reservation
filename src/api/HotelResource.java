@@ -37,4 +37,8 @@ public final class HotelResource {
         public Collection <IRoom> findARoom(Date checkIn, Date checkOut){
           return ReservationService.getInstance().findRooms(checkIn,checkOut);
         }
+
+        public Date getNewDate(Date checkIn){
+          return ReservationService.getInstance().getReservationWithNewDate(checkIn);
+        }
 }

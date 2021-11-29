@@ -140,31 +140,27 @@ public final class ReservationService {
                 potentialFreeRooms.add(thisRoom);
             }
         }
-        else if (!customerReservationMap.isEmpty()) {
-
-            if (potentialFreeRooms.isEmpty()) {
-                while (tryAgain) {
+    /*    else if (!customerReservationMap.isEmpty()) {
+            if (potentialFreeRooms.isEmpty() && tryAgain) {
                     //Convert my dates to local dates and add 7 days.
                     getReservationWithNewDates(checkInDate, checkOutDate);
                     tryAgain = false;
-                }
+
             }
-        }
+        } */
 
       return potentialFreeRooms;
   }
 
-    private void getReservationWithNewDates(Date checkInDate, Date checkOutDate) {
-        System.out.println("No room found. Searching during the same period of time after 7 days... ");
+    public Date getReservationWithNewDate(Date checkInDate) {
+       //System.out.println("No room found. Searching during the same period of time after 7 days... ");
         LocalDate checkIn = new java.sql.Date(checkInDate.getTime()).toLocalDate();
         checkIn = checkIn.plusDays(7);
-        LocalDate checkOut = new java.sql.Date(checkOutDate.getTime()).toLocalDate();
-        checkOut = checkOut.plusDays(7);
         //Convert them back to date before calling the function again.
         Date newCheckIn = java.sql.Date.valueOf(checkIn);
-        Date newCheckOut = java.sql.Date.valueOf(checkOut);
-        System.out.println("Searching with the new check in date of : " + newCheckIn.toString() + " and new check out date of: " + newCheckOut.toString());
-        findRooms(newCheckIn, newCheckOut);
+        //findRooms(newCheckIn, newCheckOut);
+        checkInDate = newCheckIn;
+       return checkInDate;
     }
 
     //Get the reservation for an individual customer.
