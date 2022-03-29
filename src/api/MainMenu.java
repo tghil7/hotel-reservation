@@ -15,6 +15,9 @@ public class MainMenu {
     Scanner kb = new Scanner(System.in);
     Date checkIn ;
     Date checkOut ;
+    Date sevenDaysCheckIn; // Date fields to hold the new dates after adding 7 days.
+    Date sevenDaysCheckOut;
+
     boolean keepRun = true;
     int action= 0;
 
@@ -162,10 +165,16 @@ public class MainMenu {
 
         if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
             System.out.println("No room available for the dates selected.Searching for rooms  7 days later.");
-            checkIn = HotelResource.getInstance().getNewDate(checkIn);
-            checkOut = HotelResource.getInstance().getNewDate(checkOut);
-            HotelResource.getInstance().findARoom(checkIn, checkOut);
-            bookTheRoom(email, "7 days from "+ checkInDate);
+            sevenDaysCheckIn = HotelResource.getInstance().getNewDate(checkIn);
+            System.out.println("Tentative new check in date:" + sevenDaysCheckIn);
+            sevenDaysCheckOut = HotelResource.getInstance().getNewDate(checkOut);
+            System.out.println("Tentative new check out date:" + sevenDaysCheckOut);
+            if (HotelResource.getInstance().findARoom(sevenDaysCheckIn, sevenDaysCheckOut).isEmpty()){
+                System.out.println ("Unfortunately, there are  still no rooms available from  " + sevenDaysCheckIn + " to " + sevenDaysCheckOut);
+            }
+            else {
+                bookTheRoom(email, "7 days from " + checkInDate);
+            }
         }
 
         else {
@@ -178,7 +187,15 @@ public class MainMenu {
 
     private void bookTheRoom(String email, String checkInDate) {
         //String debug = HotelResource.getInstance().findARoom(checkIn, checkOut).toString();
-        System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
+        //Get the reserved dates
+        String myReservedDates;
+
+        if (HotelResource.getInstance().findARoom(checkIn, checkOut).toString().equalsIgnoreCase("[]")){
+            System.out.println(HotelResource.getInstance().findARoom(sevenDaysCheckIn, sevenDaysCheckOut).toString());
+        }
+        else {
+            System.out.println(HotelResource.getInstance().findARoom(checkIn, checkOut).toString());
+        }
         System.out.println("Which room would you like to reserve?(Please enter room number:)");
         String roomNumber = kb.nextLine();
         //Book the room.
