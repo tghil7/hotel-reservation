@@ -185,9 +185,17 @@ public final class ReservationService {
                 for (Reservation reservation : existingReserveCollection) {
                     if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.before(reservation.getCheckOutDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
                         reservedRooms.add(reservation.getRoom());
-                    } else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
+                    }
+                    else if (checkInDate.after(reservation.getCheckInDate()) && checkInDate.after(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckOutDate())) {
                         reservedRooms.add(reservation.getRoom());
-                    } else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())) {
+                    }
+                    else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckOutDate())) {
+                        reservedRooms.add(reservation.getRoom());
+                    }
+                    else if (checkInDate.before(reservation.getCheckInDate()) && checkOutDate.after(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckOutDate())) {
+                        reservedRooms.add(reservation.getRoom());
+                    }
+                    else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.equals(reservation.getCheckInDate())) {
                         reservedRooms.add(reservation.getRoom());
                     }
                     else if (checkInDate.equals(reservation.getCheckInDate()) && checkOutDate.before(reservation.getCheckInDate())){
@@ -216,12 +224,11 @@ public final class ReservationService {
       int count = 0;
         Collection freeRooms = new LinkedList<Room>();
         Collection myReservedRooms = getAllReservations(checkInDate, checkOutDate);
-        //System.out.println("Reserved rooms: " + myReservedRooms.toString());
-      for (Room room : roomMap.values()){
+              for (Room room : roomMap.values()){
          if (!myReservedRooms.contains(room)){
              for (Object bookedRoom : myReservedRooms){
                  if (((Room)bookedRoom).getRoomNumber() == room.getRoomNumber()){
-                    // freeRooms.remove(room);
+                    // Likely need to compare the dates before deciding to add the room or not
                      System.out.println("No need to add the room again for this period");
                  }
                  else{
