@@ -164,7 +164,7 @@ public class MainMenu {
         }
 
         if (HotelResource.getInstance().findARoom(checkIn, checkOut).isEmpty()) {
-            System.out.println("No room available for the dates selected.Searching for rooms  7 days later.");
+            System.out.println("No room available for the dates selected.Searching for rooms available 7 days later...");
             sevenDaysCheckIn = HotelResource.getInstance().getNewDate(checkIn);
             System.out.println("Tentative new check in date:" + sevenDaysCheckIn);
             sevenDaysCheckOut = HotelResource.getInstance().getNewDate(checkOut);

@@ -135,20 +135,11 @@ public final class ReservationService {
     public Collection<IRoom> findRooms (Date checkInDate, Date checkOutDate) {
       //First get free rooms
         Collection potentialFreeRooms = getFreeRooms(checkInDate, checkOutDate);
-        if (customerReservationMap.isEmpty()){
-            for (Room thisRoom: roomMap.values()){
+        if (customerReservationMap.isEmpty()) {
+            for (Room thisRoom : roomMap.values()) {
                 potentialFreeRooms.add(thisRoom);
             }
         }
-    /*    else if (!customerReservationMap.isEmpty()) {
-            if (potentialFreeRooms.isEmpty() && tryAgain) {
-                    //Convert my dates to local dates and add 7 days.
-                    getReservationWithNewDates(checkInDate, checkOutDate);
-                    tryAgain = false;
-
-            }
-        } */
-
       return potentialFreeRooms;
   }
 
@@ -227,7 +218,7 @@ public final class ReservationService {
               for (Room room : roomMap.values()){
          if (!myReservedRooms.contains(room)){
              for (Object bookedRoom : myReservedRooms){
-                 if (((Room)bookedRoom).getRoomNumber() == room.getRoomNumber()){
+                 if (((Room)bookedRoom).getRoomNumber().equals(room.getRoomNumber())){
                     // Likely need to compare the dates before deciding to add the room or not
                      System.out.println("No need to add the room again for this period");
                  }
