@@ -122,7 +122,7 @@ public final class ReservationService {
 
   }
 
-    private void addNewReservation(Customer customer, Reservation newReservation, Collection<Reservation> customerReservationList) {
+    public void addNewReservation(Customer customer, Reservation newReservation, Collection<Reservation> customerReservationList) {
         customerReservationList.add(newReservation);
         customerReservationMap.put(customer.getEmail(), customerReservationList);
         //Remove the room that was just reserved from the list of available rooms.
